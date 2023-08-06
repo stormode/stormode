@@ -1,0 +1,19 @@
+# Caches
+__MACOSX/
+.DS_Store
+
+# Settings
+.vscode/
+
+# Builds
+dist/
+
+# Modules
+node_modules/
+
+# Test
+test.*
+
+# Logs
+*.log
+pnpm-debug.log*

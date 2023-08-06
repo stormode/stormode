@@ -1,0 +1,45 @@
+{
+	"name": "stormode",
+	"version": "0.1.0",
+	"description": "Stormode, a build tool for Node",
+	"homepage": "https://github.com/stormode/stormode",
+	"license": "MIT",
+	"keywords": [
+		"Stormode",
+		"Koa",
+		"Koa.js",
+		"Koa.ts",
+		"Express",
+		"Express.js",
+		"Express.ts",
+		"Node",
+		"Node.js",
+		"Node.ts",
+		"ts",
+		"TypeScript",
+		"js",
+		"JavaScript"
+	],
+	"files": [
+		"bin",
+		"dist"
+	],
+	"bin": {
+		"stormode": "./bin/stormode"
+	},
+	"dependencies": {
+		"dotenv": "^16.3.1",
+		"esbuild": "^0.18.17",
+		"fs-extra": "^11.1.1",
+		"nodemon": "^3.0.1",
+		"tsc-alias": "^1.8.7",
+		"tsconfig-paths": "^4.2.0"
+	},
+	"devDependencies": {
+		"@types/fs-extra": "^11.0.1",
+		"@types/node": "^20.4.7",
+		"@types/nodemon": "^1.19.2",
+		"cross-env": "^7.0.3",
+		"dotenv-cli": "^7.2.1"
+	}
+}
