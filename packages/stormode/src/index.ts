@@ -2,11 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 
 import dotenv from "dotenv";
+import terminal from "stormode-terminal";
 
 import type { Config } from "./utils/types";
-
-import color from "./utils/color";
-import tsCheck from "./utils/tscheck";
 
 import dev from "./dev";
 import build from "./build";
@@ -15,7 +13,7 @@ import preview from "./preview";
 const main = async (): Promise<void> => {
 	// declarations
 	let isPreview = false;
-	let configPath = path.resolve(process.cwd(), "stormode.config.js");
+	let configPath: string = path.resolve(process.cwd(), "stormode.config.js");
 	let config: Config | null = null;
 
 	const run = async (env: string, config?: Config): Promise<void> => {
@@ -24,6 +22,15 @@ const main = async (): Promise<void> => {
 		}
 		return dev(config);
 	};
+
+	const tsConfigPath: string = path.resolve(
+		process.cwd(),
+		"stormode.config.ts",
+	);
+
+	if (fs.existsSync(tsConfigPath)) {
+		configPath = tsConfigPath;
+	}
 
 	// argument loop
 	for (let i = 0; i < process.argv.length; i++) {
@@ -59,22 +66,20 @@ const main = async (): Promise<void> => {
 				"Please make sure you have a valid config setup or the correct format.";
 
 			if (!config) {
-				console.log(`- [${color.red("error")}] ${er1}`);
-				console.log(`- [${color.red("error")}] ${er2}`);
+				terminal.error(er1);
+				terminal.error(er2);
 				throw new Error();
 			}
 
 			if (typeof config !== "object") {
-				console.log(`- [${color.red("error")}] ${er3}`);
-				console.log(`- [${color.red("error")}] ${er4}`);
+				terminal.error(er3);
+				terminal.error(er4);
 				throw new Error();
 			}
 
-			console.log(
-				`- [${color.cyan("info")}] Config loaded from ${configPath}`,
-			);
+			terminal.info(`Config loaded from ${configPath}`);
 		} else {
-			console.log(`- [${color.cyan("info")}] Config loaded as default`);
+			terminal.info("Config loaded as default");
 		}
 
 		// preview mode
@@ -87,7 +92,7 @@ const main = async (): Promise<void> => {
 		dotenv.config({
 			override: true,
 		});
-		console.log(`- [${color.cyan("info")}] Env loaded from .env`);
+		terminal.info("Env loaded from .env");
 
 		// .env.development / .env.production
 		const env2 = path.resolve(process.cwd(), `.env.${env}`);
@@ -97,10 +102,7 @@ const main = async (): Promise<void> => {
 				override: true,
 				path: env2,
 			});
-			console.log(
-				`- [${color.cyan("info")}]`,
-				`Env loaded from .env.${env}`,
-			);
+			terminal.info(`Env loaded from .env.${env}`);
 		}
 
 		// .env.local.development / .env.local.production
@@ -111,18 +113,18 @@ const main = async (): Promise<void> => {
 				override: true,
 				path: env3,
 			});
-			console.log(
-				`- [${color.cyan("info")}]`,
-				`Env loaded from .env.${env}.local`,
-			);
+			terminal.info(`Env loaded from .env.${env}.local`);
 		}
 
 		if (config && config) return run(env, config);
 
 		return run(env);
 	} catch (err) {
-		return console.log(err);
+		console.log(err);
+		return;
 	}
 };
 
 main();
+
+export type { Config };

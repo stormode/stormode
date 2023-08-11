@@ -2,7 +2,7 @@
 
 # Stormode
 
-Stormode, a powerful build tool for Node that offers a range of features to streamline your development process.
+Stormode, a build tool for Node that offers a range of features to streamline your development process.
 
 ## Why Choose Stormode?
 
@@ -230,6 +230,18 @@ const config = {
 };
 
 module.exports = config;
+```
+
+Or `stormode.config.ts` if you are using TypeScript and ESModule:
+
+```typescript
+import { Config } from "stormode";
+
+const config = {
+	// ...
+} as Config;
+
+export default config;
 ```
 
 ## License

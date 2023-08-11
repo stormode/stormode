@@ -1,0 +1,30 @@
+{
+	"name": "stormode-terminal",
+	"version": "0.1.1",
+	"description": "Stormode Terminal, for better console log experience",
+	"homepage": "https://github.com/stormode/stormode",
+	"license": "MIT",
+	"keywords": [
+		"Stormode Terminal",
+		"Stormode",
+		"terminal",
+		"console",
+		"log",
+		"Koa",
+		"Koa.js",
+		"Koa.ts",
+		"Express",
+		"Express.js",
+		"Express.ts",
+		"Node",
+		"Node.js",
+		"Node.ts",
+		"ts",
+		"TypeScript",
+		"js",
+		"JavaScript"
+	],
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": ["dist"]
+}

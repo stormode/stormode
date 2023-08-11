@@ -1,6 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import terminal from "stormode-terminal";
+
 type TsConfig = {
 	compilerOptions: {
 		strict?: boolean;
@@ -29,8 +31,8 @@ const tsConfig = async (): Promise<TsConfig | null> => {
 		} else {
 			return null;
 		}
-	} catch (err) {
-		console.log(err);
+	} catch (err: any) {
+		terminal.error(err.message);
 		return null;
 	}
 };

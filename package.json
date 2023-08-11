@@ -12,9 +12,13 @@
 		"format-cli": "npm-run-all --sequential format-cli:eslint format-cli:prettier",
 		"format-cli:eslint": "eslint packages/create-stormode/src/ --fix --ext .ts",
 		"format-cli:prettier": "prettier --write packages/create-stormode/src/ --ignore-unknown",
-		"build": "npm-run-all build-pkg build-cli",
+		"format-tml": "npm-run-all --sequential format-cs:eslint format-cs:prettier",
+		"format-tml:eslint": "eslint packages/stormode-terminal/src/ --fix --ext .ts",
+		"format-tml:prettier": "prettier --write packages/stormode-terminal/src/ --ignore-unknown",
+		"build": "npm-run-all build-pkg build-cli build-tml",
 		"build-pkg": "tsc -p packages/stormode/tsconfig.json",
-		"build-cli": "tsc -p packages/create-stormode/tsconfig.json"
+		"build-cli": "tsc -p packages/create-stormode/tsconfig.json",
+		"build-tml": "tsc -p packages/stormode-terminal/tsconfig.json && tsc -p packages/stormode-terminal/tsconfig.test.json"
 	},
 	"devDependencies": {
 		"@typescript-eslint/eslint-plugin": "^6.2.1",

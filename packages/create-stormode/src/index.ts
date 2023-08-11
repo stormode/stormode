@@ -3,19 +3,18 @@ import path from "node:path";
 
 import prompts from "prompts";
 import fetch from "npm-registry-fetch";
-
-import color, { Color } from "./color";
+import terminal, { color } from "stormode-terminal";
 
 type Variant = {
 	title: string;
 	value: string;
-	color: Color;
+	color: (val: string) => string;
 };
 
 type Framework = {
 	title: string;
 	value: string;
-	color: Color;
+	color: (val: string) => string;
 	variants?: Variant[];
 };
 
@@ -125,7 +124,7 @@ const lastVer = async (name: string): Promise<string> => {
 		return latestVersion;
 	} catch (error: any) {
 		const ermsg = `Failed to get the latest version of ${name}`;
-		throw new Error(`- [${color.red("error")}] ${ermsg}`);
+		throw new Error(terminal.error(ermsg, { mode: "string" }));
 	}
 };
 
@@ -156,10 +155,8 @@ const copyAll = async (source: string, target: string): Promise<void> => {
 const main = async (): Promise<void> => {
 	try {
 		// welcome message
-		const wcmsg = `Welcome to ${color.cyan("Stormode")}`;
-		const wcmsg2 = "A powerful build tool for Node";
-		console.log(`- [${color.cyan("info")}] ${wcmsg}`);
-		console.log(`- [${color.cyan("info")}] ${wcmsg2}`);
+		terminal.info(`Welcome to ${color.blue("Stormode")}`);
+		terminal.info("A powerful build tool for Node");
 
 		// get answers
 		const answers: Answers = await prompts(
@@ -187,13 +184,13 @@ const main = async (): Promise<void> => {
 			],
 			{
 				onCancel: () => {
-					const err = "Installation canceled";
-					throw new Error(`- [${color.red("cancel")}] ${err}`);
+					const err = "Installation cancelled";
+					throw new Error(terminal.cancel(err, { mode: "string" }));
 				},
 			},
 		);
 
-		console.log(`- [${color.cyan("info")}] Creating project...`);
+		terminal.wait("Creating project...");
 
 		// name: any;
 		// framework: vanilla | express | koa;
@@ -220,13 +217,13 @@ const main = async (): Promise<void> => {
 			} else {
 				existmsg = `Folder (${name}) already exists`;
 			}
-			console.log(`- [${color.cyan("info")}] ${existmsg}, ${existmsg2}`);
+			terminal.info(`${existmsg}, ${existmsg2}`);
 			counter++;
 		}
 
 		fs.mkdirSync(targetDir);
 
-		console.log(`- [${color.cyan("info")}] Fetching dependencies data...`);
+		terminal.wait("Fetching dependencies data...");
 
 		const dependencies = {
 			// express
@@ -326,7 +323,7 @@ const main = async (): Promise<void> => {
 			);
 		}
 
-		console.log(`- [${color.cyan("info")}] Creating files...`);
+		terminal.wait("Creating files...");
 
 		// copy default files
 		const templateDefault = path.resolve(
@@ -379,7 +376,7 @@ const main = async (): Promise<void> => {
 		await copyAll(template, targetDir);
 
 		// done
-		console.log(`- [${color.green("ready")}] Project created successfully`);
+		terminal.ready("Project created successfully");
 	} catch (err: any) {
 		console.log(err.message);
 		return;

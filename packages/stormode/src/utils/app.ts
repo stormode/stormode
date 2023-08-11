@@ -2,10 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 
 import nodemon from "nodemon";
+import terminal from "stormode-terminal";
 
 import type { Config } from "./types";
-
-import color from "./color";
 
 const app = (
 	watch: boolean,
@@ -26,23 +25,18 @@ const app = (
 		ignore: watch ? config?.app?.ignore ?? [] : ["/*"],
 	});
 
-	let msg: string;
-
 	nodemon
 		.on("start", () => {
-			msg = `Starting ${finalPath}`;
-			console.log(`- [${color.cyan("info")}]`, msg);
+			terminal.info(`Starting ${finalPath}`);
 		})
 		.on("crash", () => {
-			msg = "App crashed, wating for changes...";
-			console.log(`- [${color.red("error")}]`, msg);
+			terminal.error("App crashed, wating for changes...");
 		})
 		.on("quit", () => {
 			process.exit();
 		})
 		.on("restart", (files) => {
-			msg = "Restarting due to changes...";
-			console.log(`- [${color.cyan("info")}]`, msg);
+			terminal.info("Restarting due to changes...");
 		});
 };
 

@@ -3,11 +3,11 @@ import { exec } from "child_process";
 
 import * as fs from "fs-extra";
 import * as esbuild from "esbuild";
+import terminal from "stormode-terminal";
 import { replaceTscAliasPaths } from "tsc-alias";
 
 import type { Config } from "./utils/types";
 
-import color from "./utils/color";
 import tsCheck from "./utils/tscheck";
 import tsConfig from "./utils/tsconfig";
 
@@ -20,7 +20,7 @@ const exe = async (command: string): Promise<void> => {
 			process.stderr.on("data", (data) => {
 				const output: string = data.toString().trim();
 				if (output.length > 0) {
-					console.log(`- [${color.red("error")}]`, output);
+					terminal.error(output);
 				}
 			});
 
@@ -31,8 +31,7 @@ const exe = async (command: string): Promise<void> => {
 
 		// error handling for the process
 		process.on("error", (err: Error) => {
-			const ermsg = "Error executing the command:";
-			console.error(`- [${color.red("error")}] ${ermsg}`);
+			terminal.error("Error executing the command:");
 			console.log(err.message);
 			reject(err);
 		});
@@ -120,20 +119,21 @@ const build = async (config?: Config): Promise<void> => {
 		const define = await getEnv();
 
 		if (tsCheckResult) {
-			console.log(`- [${color.cyan("info")}] Transpiling...`);
+			terminal.wait("Transpiling...");
 			// ts => js
 			await exe("tsc");
 			// absolute path => relative path
 			await replaceTscAliasPaths();
 		}
 
-		console.log(`- [${color.cyan("info")}] Building...`);
+		terminal.wait("Building...");
 
 		await useEsbuild(tsCheckResult ? distDir : srcDir, distDir);
 
-		return console.log(`- [${color.green("ready")}] Build completed`);
+		terminal.ready("Build completed");
+		return;
 	} catch (err) {
-		console.log(`- [${color.red("error")}] Build failed`);
+		terminal.error("Build failed");
 		console.log(err);
 		return;
 	}

@@ -1,6 +1,6 @@
 {
 	"name": "create-stormode",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Create a Stormode app with Stormode CLI",
 	"homepage": "https://github.com/stormode/stormode",
 	"license": "MIT",
@@ -22,6 +22,8 @@
 		"js",
 		"JavaScript"
 	],
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
 	"files": [
 		"bin",
 		"dist",
@@ -32,7 +34,8 @@
 	},
 	"dependencies": {
 		"npm-registry-fetch": "^15.0.0",
-		"prompts": "^2.4.2"
+		"prompts": "^2.4.2",
+		"stormode-terminal": "^0.1.1"
 	},
 	"devDependencies": {
 		"@types/npm-registry-fetch": "^8.0.4",

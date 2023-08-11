@@ -34,5 +34,5 @@ useRouter(app);
 // listening
 app.listen(port, () => {
 	const msg = `Server running on: http://0.0.0.0:${port}`;
-	console.log(`- [\x1b[32mready\x1b[0m]`, msg);
+	console.log(`- [\x1b[38;5;10mready\x1b[0m]`, msg);
 });
