@@ -97,6 +97,26 @@ Stormode comes pre-installed with `tsconfig-paths/register`, so you only need to
 }
 ```
 
+If you are intend to use Stormoode config file in TypeScript format, make sure to exclude it in `tsconfig.json`:
+
+```json
+{
+	"compilerOptions": {},
+	"ts-node": {},
+	"include": ["src"]
+}
+```
+
+or
+
+```json
+{
+	"compilerOptions": {},
+	"ts-node": {},
+	"exclude": ["node_modules", "stormode.config.ts"]
+}
+```
+
 After installing dependencies (and `tsconfig.json` configuration), you may add Stormode scripts into `package.json` to run you project.
 
 ```json
@@ -199,7 +219,7 @@ const word: string = process.env.WORD;
 
 ## Create Your Stormode Configuration
 
-You may configure Stormode by creating a file named `stormode.config.js`. Here's an example:
+To set up your Stormode configuration, you may create a file named `stormode.config.js` (or `stormode.config.cjs` for ESModule usage). Here's an example:
 
 ```javascript
 const config = {
@@ -232,14 +252,14 @@ const config = {
 module.exports = config;
 ```
 
-Or `stormode.config.ts` if you are using TypeScript and ESModule:
+If you prefer to use TypeScript, you may name your configuration file as `stormode.config.ts` and configure it as below:
 
 ```typescript
-import { Config } from "stormode";
+import type { Config } from "stormode";
 
 const config = {
 	// ...
-} as Config;
+} satisfies Config;
 
 export default config;
 ```

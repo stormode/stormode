@@ -1,6 +1,6 @@
 {
 	"name": "create-stormode",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"description": "Create a Stormode app with Stormode CLI",
 	"homepage": "https://github.com/stormode/stormode",
 	"license": "MIT",

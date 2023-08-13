@@ -1,5 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 import dotenv from "dotenv";
 import terminal from "stormode-terminal";
@@ -10,26 +10,39 @@ import dev from "./dev";
 import build from "./build";
 import preview from "./preview";
 
+import configLoader from "./utils/configLoader";
+
+const run = async (env: string, config?: Config): Promise<void> => {
+	if (env === "production") {
+		return await build(config);
+	}
+	return dev(config);
+};
+
 const main = async (): Promise<void> => {
 	// declarations
 	let isPreview = false;
-	let configPath: string = path.resolve(process.cwd(), "stormode.config.js");
 	let config: Config | null = null;
 
-	const run = async (env: string, config?: Config): Promise<void> => {
-		if (env === "production") {
-			return await build(config);
-		}
-		return dev(config);
-	};
+	// path start at root
+	const configJsPath: string = "stormode.config.js";
+	const configCjsPath: string = "stormode.config.cjs";
+	const configTsPath: string = "stormode.config.ts";
 
-	const tsConfigPath: string = path.resolve(
-		process.cwd(),
-		"stormode.config.ts",
-	);
+	let configPath: string = configJsPath;
 
-	if (fs.existsSync(tsConfigPath)) {
-		configPath = tsConfigPath;
+	// stormode.config.cjs
+	const configMjsPathRaw: string = path.resolve(process.cwd(), configCjsPath);
+
+	if (fs.existsSync(configMjsPathRaw)) {
+		configPath = configCjsPath;
+	}
+
+	// stormode.config.ts
+	const configTsPathRaw: string = path.resolve(process.cwd(), configTsPath);
+
+	if (fs.existsSync(configTsPathRaw)) {
+		configPath = configTsPath;
 	}
 
 	// argument loop
@@ -48,75 +61,31 @@ const main = async (): Promise<void> => {
 				break;
 			case "--config":
 			case "-c":
-				configPath = path.resolve(process.cwd(), valNext);
+				configPath = valNext;
 				break;
 		}
 	}
 
 	try {
 		// check config
-		if (fs.existsSync(configPath)) {
-			config = await require(configPath);
-
-			const er1 = "Unable to import the stormode config file,";
-			const er2 =
-				"Please ensure that the config file exists and is in the correct format.";
-			const er3 = "Unable to read stormode config file,";
-			const er4 =
-				"Please make sure you have a valid config setup or the correct format.";
-
-			if (!config) {
-				terminal.error(er1);
-				terminal.error(er2);
-				throw new Error();
-			}
-
-			if (typeof config !== "object") {
-				terminal.error(er3);
-				terminal.error(er4);
-				throw new Error();
-			}
-
-			terminal.info(`Config loaded from ${configPath}`);
-		} else {
-			terminal.info("Config loaded as default");
-		}
+		config = await configLoader(configPath);
 
 		// preview mode
 		if (isPreview) return preview(config);
 
-		// declarations 2
-		const env = process.env.NODE_ENV || "development";
+		// env
+		const env: string = process.env.NODE_ENV || "development";
+		const envFiles: string[] = [".env", `.env.${env}`, `.env.${env}.local`];
 
-		// .env
-		dotenv.config({
-			override: true,
-		});
-		terminal.info("Env loaded from .env");
-
-		// .env.development / .env.production
-		const env2 = path.resolve(process.cwd(), `.env.${env}`);
-
-		if (fs.existsSync(env2)) {
-			dotenv.config({
-				override: true,
-				path: env2,
-			});
-			terminal.info(`Env loaded from .env.${env}`);
+		for (const envFile of envFiles) {
+			const fullPath = path.resolve(process.cwd(), envFile);
+			if (fs.existsSync(fullPath)) {
+				dotenv.config({ override: true, path: fullPath });
+				terminal.info(`Env loaded from ${envFile}`);
+			}
 		}
 
-		// .env.local.development / .env.local.production
-		const env3 = path.resolve(process.cwd(), `.env.${env}.local`);
-
-		if (fs.existsSync(env3)) {
-			dotenv.config({
-				override: true,
-				path: env3,
-			});
-			terminal.info(`Env loaded from .env.${env}.local`);
-		}
-
-		if (config && config) return run(env, config);
+		if (config) return run(env, config);
 
 		return run(env);
 	} catch (err) {

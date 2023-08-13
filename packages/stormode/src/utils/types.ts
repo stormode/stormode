@@ -3,9 +3,9 @@ export type Config = {
 	app?: {
 		// will watch file changes in dev.src folder
 		// you may add more
-		watch: string[];
+		watch?: string[];
 		// which files to ignore
-		ignore: string[];
+		ignore?: string[];
 	};
 	dev?: {
 		// src folder, default: src

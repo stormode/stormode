@@ -1,10 +1,10 @@
-import fs from "node:fs";
-import path from "node:path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 import type { Config } from "./types";
 import tsConfig from "./tsconfig";
 
-const tsCheck = async (config?: Config): Promise<boolean> => {
+const tsCheck = async (config: Config | null = null): Promise<boolean> => {
 	// declarations
 	const tsconfig = await tsConfig();
 	const src: string =

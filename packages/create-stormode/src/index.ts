@@ -1,5 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 import prompts from "prompts";
 import fetch from "npm-registry-fetch";
@@ -304,6 +304,7 @@ const main = async (): Promise<void> => {
 			"ts-node": {
 				require: ["tsconfig-paths/register"],
 			},
+			include: ["src"],
 		};
 
 		// package.json
@@ -347,9 +348,11 @@ const main = async (): Promise<void> => {
 			path.join(targetDir, ".env.production"),
 		);
 
+		const SmConfigName = isTs ? "stormode.config.ts" : "stormode.config.js";
+
 		fs.copyFileSync(
-			path.join(templateDefault, "stormode.config.js"),
-			path.join(targetDir, "stormode.config.js"),
+			path.join(templateDefault, SmConfigName),
+			path.join(targetDir, SmConfigName),
 		);
 
 		// copy template files

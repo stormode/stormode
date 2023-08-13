@@ -1,7 +1,3 @@
-const config = {
-	build: {
-		minify: true,
-	},
-};
+const config = {};
 
 module.exports = config;

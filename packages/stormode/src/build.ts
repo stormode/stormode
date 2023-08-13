@@ -1,5 +1,4 @@
-import path from "node:path";
-import { exec } from "child_process";
+import * as path from "node:path";
 
 import * as fs from "fs-extra";
 import * as esbuild from "esbuild";
@@ -8,38 +7,12 @@ import { replaceTscAliasPaths } from "tsc-alias";
 
 import type { Config } from "./utils/types";
 
+import exe from "./utils/exe";
 import tsCheck from "./utils/tscheck";
 import tsConfig from "./utils/tsconfig";
 
-const exe = async (command: string): Promise<void> => {
-	return new Promise<void>((resolve, reject) => {
-		const process = exec(command);
-
-		// error
-		process.stderr &&
-			process.stderr.on("data", (data) => {
-				const output: string = data.toString().trim();
-				if (output.length > 0) {
-					terminal.error(output);
-				}
-			});
-
-		// exit
-		process.on("exit", (code) => {
-			resolve();
-		});
-
-		// error handling for the process
-		process.on("error", (err: Error) => {
-			terminal.error("Error executing the command:");
-			console.log(err.message);
-			reject(err);
-		});
-	});
-};
-
 // build
-const build = async (config?: Config): Promise<void> => {
+const build = async (config: Config | null = null): Promise<void> => {
 	try {
 		// declarations 1
 		type envType = { [key: string]: string };

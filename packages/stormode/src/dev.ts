@@ -1,5 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 import type { Config } from "./utils/types";
 
@@ -8,7 +8,7 @@ import tsCheck from "./utils/tscheck";
 import tsConfig from "./utils/tsconfig";
 
 // watch changes
-const dev = async (config?: Config): Promise<void> => {
+const dev = async (config: Config | null = null): Promise<void> => {
 	// declarations
 	const tsCheckResult = await tsCheck(config);
 	const tsconfig = await tsConfig();
