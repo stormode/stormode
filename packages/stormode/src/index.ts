@@ -1,99 +1,142 @@
-import * as fs from "node:fs";
+import type { Config, ImpartialConfig } from "./@types/config";
+import type { DevArgs, BuildArgs, PreviewArgs } from "./@types/args";
+
+import * as os from "node:os";
 import * as path from "node:path";
 
-import dotenv from "dotenv";
+import * as fse from "fs-extra";
+import { Command } from "commander";
 import terminal from "stormode-terminal";
 
-import type { Config } from "./utils/types";
+import configFinder from "./utils/config/finder";
+import configLoader from "./utils/config/loader";
+import configCliApplier from "./utils/config/applier";
+import envLoader from "./utils/envs/loader";
 
-import dev from "./dev";
-import build from "./build";
-import preview from "./preview";
+import dev from "./commands/dev";
+import build from "./commands/build";
+import preview from "./commands/preview";
 
-import configLoader from "./utils/configLoader";
-
-const run = async (env: string, config?: Config): Promise<void> => {
-	if (env === "production") {
-		return await build(config);
-	}
-	return dev(config);
-};
+const cwd = process.cwd();
 
 const main = async (): Promise<void> => {
-	// declarations
-	let isPreview = false;
-	let config: Config | null = null;
-
-	// path start at root
-	const configJsPath: string = "stormode.config.js";
-	const configCjsPath: string = "stormode.config.cjs";
-	const configTsPath: string = "stormode.config.ts";
-
-	let configPath: string = configJsPath;
-
-	// stormode.config.cjs
-	const configMjsPathRaw: string = path.resolve(process.cwd(), configCjsPath);
-
-	if (fs.existsSync(configMjsPathRaw)) {
-		configPath = configCjsPath;
-	}
-
-	// stormode.config.ts
-	const configTsPathRaw: string = path.resolve(process.cwd(), configTsPath);
-
-	if (fs.existsSync(configTsPathRaw)) {
-		configPath = configTsPath;
-	}
-
-	// argument loop
-	for (let i = 0; i < process.argv.length; i++) {
-		const val = process.argv[i];
-		const valNext = process.argv[i + 1];
-		switch (val) {
-			case "dev":
-				process.env.NODE_ENV = "development";
-				break;
-			case "build":
-				process.env.NODE_ENV = "production";
-				break;
-			case "preview":
-				isPreview = true;
-				break;
-			case "--config":
-			case "-c":
-				configPath = valNext;
-				break;
-		}
-	}
-
 	try {
-		// check config
-		config = await configLoader(configPath);
+		// declarations
+		const program = new Command();
 
-		// preview mode
-		if (isPreview) return preview(config);
+		let mode: string | null = null;
 
-		// env
-		const env: string = process.env.NODE_ENV || "development";
-		const envFiles: string[] = [".env", `.env.${env}`, `.env.${env}.local`];
+		let devArgs: DevArgs = {};
+		let buildArgs: BuildArgs = {};
+		let previewArgs: PreviewArgs = {};
 
-		for (const envFile of envFiles) {
-			const fullPath = path.resolve(process.cwd(), envFile);
-			if (fs.existsSync(fullPath)) {
-				dotenv.config({ override: true, path: fullPath });
-				terminal.info(`Env loaded from ${envFile}`);
-			}
+		// info
+		program
+			.name("stormode")
+			.description("Stormode, A Build Tool for Node")
+			.version("v0.3.0", "-v, --version", "get stormode version");
+
+		// dev
+		program
+			.command("dev")
+			.description("development server")
+			.option("-c, --config <directory + file>", "config file path")
+			.option("--rootdir, --rootDir <directory>", "input directory")
+			.option("--outdir, --outDir <directory>", "output directory")
+			.option("--index <file>", "index file name")
+			.option("--tsconfig <directory + file>", "tsconfig.json path")
+			.action(async (args: DevArgs) => {
+				mode = "dev";
+				devArgs = args;
+				process.env.NODE_ENV = "development";
+			});
+
+		// build
+		program
+			.command("build")
+			.description("project builder")
+			.option("-c, --config <directory + file>", "config file path")
+			.option("-e, --env <name>", "environment name")
+			.option("--rootdir, --rootDir <directory>", "input directory")
+			.option("--outdir, --outDir <directory>", "output directory")
+			.option("--index <file>", "index file name")
+			.option("--minify", "minify code")
+			.option("--map, --sourcemap", "generate sourcemap")
+			.option("--tsconfig <directory + file>", "tsconfig.json path")
+			.action(async (args: BuildArgs) => {
+				mode = "build";
+				buildArgs = args;
+				process.env.NODE_ENV = args.env ?? "production";
+			});
+
+		// preview
+		program
+			.command("preview")
+			.description("production preview")
+			.option("-c, --config <directory + file>", "config file path")
+			.option("--outdir, --outDir <directory>", "output path")
+			.option("--index <file>", "index file name")
+			.action(async (args: PreviewArgs) => {
+				mode = "preview";
+				previewArgs = args;
+			});
+
+		// parse
+		program.parse();
+
+		// god mode
+		if (!mode) {
+			throw new Error("Command not found");
 		}
 
-		if (config) return run(env, config);
+		// get config
+		const configPath: string = await configFinder();
+		const configRaw: Config | null = await configLoader(
+			devArgs.config ||
+				buildArgs.config ||
+				previewArgs.config ||
+				configPath,
+		);
 
-		return run(env);
-	} catch (err) {
-		console.log(err);
-		return;
+		// apply config from CLI
+		const config: ImpartialConfig = await configCliApplier(
+			configRaw,
+			mode,
+			devArgs,
+			buildArgs,
+			previewArgs,
+		);
+
+		// preview
+		if (mode === "preview") {
+			return await preview(config);
+		}
+
+		// load env
+		await envLoader();
+
+		switch (mode) {
+			// dev
+			case "dev":
+				return await dev(config);
+			// build
+			case "build":
+				return await build(config);
+			default:
+				throw new Error("Unvalid command");
+		}
+	} catch (err: any) {
+		const osTempDir: string = path.join(os.tmpdir(), "stormode");
+		const tempDir: string = path.join(cwd, ".stormode", ".temp");
+		if (await fse.exists(osTempDir)) {
+			await fse.rm(osTempDir, { recursive: true });
+		}
+		if (await fse.exists(tempDir)) {
+			await fse.rm(tempDir, { recursive: true });
+		}
+		terminal.error(err.message);
 	}
 };
 
 main();
-
 export type { Config };

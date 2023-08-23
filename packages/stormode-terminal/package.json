@@ -2,7 +2,12 @@
 	"name": "stormode-terminal",
 	"version": "0.1.1",
 	"description": "Stormode Terminal, for better console log experience",
-	"homepage": "https://github.com/stormode/stormode",
+	"homepage": "https://stormode.dev",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/stormode/stormode.git",
+		"directory": "packages/stormode-terminal"
+	},
 	"license": "MIT",
 	"keywords": [
 		"Stormode Terminal",
@@ -10,12 +15,16 @@
 		"terminal",
 		"console",
 		"log",
-		"Koa",
-		"Koa.js",
-		"Koa.ts",
+		"build tool",
 		"Express",
 		"Express.js",
 		"Express.ts",
+		"Koa",
+		"Koa.js",
+		"Koa.ts",
+		"Fastify",
+		"Fastify.js",
+		"Fastify.ts",
 		"Node",
 		"Node.js",
 		"Node.ts",
@@ -26,5 +35,7 @@
 	],
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"files": ["dist"]
+	"files": [
+		"dist"
+	]
 }

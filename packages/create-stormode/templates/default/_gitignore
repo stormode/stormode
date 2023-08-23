@@ -6,7 +6,7 @@ __MACOSX/
 .vscode/
 
 # Builds
-dist/
+.stormode/
 
 # Modules
 node_modules/
