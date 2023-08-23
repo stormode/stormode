@@ -1,6 +1,6 @@
 # Create Stormode
 
-This is a CLI for creating a Stormode app, read <a href="https://stormode.dev" target="_blank" rel="noreferrer noopener">stormode.dev</a> for more information.
+This is a CLI for creating a Stormode app, visit <a href="https://stormode.dev" target="_blank" rel="noreferrer noopener">stormode.dev</a> for more information.
 
 ## License
 

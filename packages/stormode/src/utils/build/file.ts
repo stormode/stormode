@@ -21,6 +21,8 @@ const isInside = (basePath: string, targetPath: string) => {
 	return !relative.startsWith("..") && !path.isAbsolute(relative);
 };
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 const buildFile = async (
 	config: ImpartialConfig,
 	rootDir: string,
@@ -119,13 +121,30 @@ const buildFile = async (
 	if (esTargetPath.endsWith(".js")) {
 		await fse.remove(outPath);
 		await fse.remove(outMapPath);
-		await esbuild.build({
-			define: await envGetter(),
-			entryPoints: [esTargetPath],
-			outfile: outPath,
-			minify: isDev ? false : config.build.minify,
-			sourcemap: sourceMap,
-		});
+
+		const maxRetry = 5;
+
+		const esb = async (retryCount = 0) => {
+			try {
+				await esbuild.build({
+					define: await envGetter(),
+					entryPoints: [esTargetPath!],
+					outfile: outPath,
+					minify: isDev ? false : config.build.minify,
+					sourcemap: sourceMap,
+					logLevel: "silent",
+				});
+			} catch (err) {
+				if (retryCount < maxRetry) {
+					await sleep(100);
+					await esb(retryCount + 1);
+				} else {
+					throw err;
+				}
+			}
+		};
+
+		await esb();
 	}
 	// copy
 	else {

@@ -12,6 +12,8 @@ import envGetter from "../envs/getter";
 
 const cwd = process.cwd();
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 const buildDir = async (
 	config: ImpartialConfig,
 	rootDir: string,
@@ -77,13 +79,31 @@ const buildDir = async (
 						await useEsbuild(rootPath, outPath);
 					} else {
 						if (rootPath.endsWith(".js")) {
-							await esbuild.build({
-								define: await envGetter(),
-								entryPoints: [rootPath],
-								outfile: outPath,
-								minify: isDev ? false : config.build.minify,
-								sourcemap: sourceMap,
-							});
+							const maxRetry = 5;
+
+							const esb = async (retryCount = 0) => {
+								try {
+									await esbuild.build({
+										define: await envGetter(),
+										entryPoints: [rootPath],
+										outfile: outPath,
+										minify: isDev
+											? false
+											: config.build.minify,
+										sourcemap: sourceMap,
+										logLevel: "silent",
+									});
+								} catch (err) {
+									if (retryCount < maxRetry) {
+										await sleep(100);
+										await esb(retryCount + 1);
+									} else {
+										throw err;
+									}
+								}
+							};
+
+							await esb();
 						}
 						// copy
 						else {
@@ -94,7 +114,10 @@ const buildDir = async (
 			);
 		};
 
-		await fse.emptyDir(outDir);
+		if (await fse.pathExists(outDir)) {
+			await fse.rm(outDir, { recursive: true });
+		}
+
 		await useEsbuild(isTs ? tempDir : rootDir, outDir);
 
 		// typescript alias

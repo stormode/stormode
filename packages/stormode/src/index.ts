@@ -34,7 +34,7 @@ const main = async (): Promise<void> => {
 		program
 			.name("stormode")
 			.description("Stormode, A Build Tool for Node")
-			.version("v0.3.0", "-v, --version", "get stormode version");
+			.version("v0.3.1", "-v, --version", "get stormode version");
 
 		// dev
 		program
