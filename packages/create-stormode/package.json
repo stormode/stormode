@@ -1,6 +1,6 @@
 {
 	"name": "create-stormode",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Create a Stormode project with Stormode CLI",
 	"homepage": "https://stormode.dev",
 	"repository": {

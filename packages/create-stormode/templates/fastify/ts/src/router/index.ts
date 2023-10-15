@@ -1,26 +1,12 @@
-import { FastifyInstance, RouteShorthandOptions } from "fastify";
+import { FastifyInstance } from "fastify";
 
 const useRouter = (server: FastifyInstance) => {
-	// router options
-	const opts: RouteShorthandOptions = {
-		schema: {
-			response: {
-				200: {
-					type: "object",
-					properties: {
-						message: {
-							type: "string",
-						},
-					},
-				},
-			},
-		},
-	};
-
-	// route
-	server.get("/", opts, async (request, reply) => {
-		return { message: "Hello World" };
-	});
+    // route
+    server.get<{}>("/", async (request, reply) => {
+        return reply.code(200).send({
+            message: "Hello World",
+        });
+    });
 };
 
 export default useRouter;

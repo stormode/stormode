@@ -1,7 +1,9 @@
-const useRouter = (app) => {
+const useRouter = (fastify) => {
     // route
-	app.get("/", (request, reply) => {
-		reply.send({ message: "Hello World" });
+	fastify.get("/", async (request, reply) => {
+		return reply.code(200).send({
+            message: "Hello World",
+        });
 	});
 };
 

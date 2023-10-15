@@ -1,16 +1,19 @@
+const fastify = require("fastify");
+
 const useRouter = require("./router");
 
-const isPrd = process.env.NODE_ENV === "production";
-const fastify = require("fastify")({ logger: !isPrd });
+const isDev = process.env.NODE_ENV === "development";
+
+const server = fastify({ logger: isDev });
 const port = Number(process.env.PORT);
 
 // use router
-useRouter(fastify);
+useRouter(server);
 
 // listener
-fastify.listen({ port: port }, (err) => {
+server.listen({ port: port }, (err) => {
 	if (err) {
-		fastify.log.error(err);
+		console.error(e instanceof Error ? e.message : "Error");
 		process.exit(1);
 	}
 	const msg = `Server running on: http://0.0.0.0:${port}`;
