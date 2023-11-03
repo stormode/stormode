@@ -1,4 +1,6 @@
-import { Application, Router, Request, Response } from "express";
+import type { Application, Request, Response } from "express";
+
+import { Router } from "express";
 
 const useRouter = (app: Application): void => {
 	// declarations

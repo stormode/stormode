@@ -1,4 +1,6 @@
-import Fastify, { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
+
+import Fastify from "fastify";
 
 import useRouter from "./router";
 
@@ -13,7 +15,7 @@ const port: number = Number(process.env.PORT ?? 4001);
 useRouter(server);
 
 // listener
-const start = async () => {
+(async () => {
     try {
         await server.listen({ port: port });
         const msg = `Server running on: http://0.0.0.0:${port}`;
@@ -22,6 +24,4 @@ const start = async () => {
         console.error(err instanceof Error ? err.message : "Error");
         process.exit(1);
     }
-};
-
-start();
+})();
