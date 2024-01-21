@@ -12,10 +12,10 @@ useRouter(server);
 
 // listener
 server.listen({ port: port }, (err) => {
-	if (err) {
-		console.error(e instanceof Error ? e.message : "Error");
-		process.exit(1);
-	}
-	const msg = `Server running on: http://0.0.0.0:${port}`;
-	console.log(`- [\x1b[38;5;10mready\x1b[0m]`, msg);
+    if (err) {
+        console.error(e instanceof Error ? e.message : "Error");
+        process.exit(1);
+    }
+    const msg = `Server running on: http://0.0.0.0:${port}`;
+    console.log(`- [\x1b[38;5;10mready\x1b[0m]`, msg);
 });

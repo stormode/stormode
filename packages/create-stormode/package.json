@@ -1,55 +1,55 @@
 {
-	"name": "create-stormode",
-	"version": "0.3.2",
-	"description": "Create a Stormode project with Stormode CLI",
-	"homepage": "https://stormode.dev",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/stormode/stormode.git",
-		"directory": "packages/create-stormode"
-	},
-	"license": "MIT",
-	"keywords": [
-		"Stormode",
-		"create-stormode",
-		"build tool",
-		"cli",
-		"Express",
-		"Express.js",
-		"Express.ts",
-		"Koa",
-		"Koa.js",
-		"Koa.ts",
-		"Fastify",
-		"Fastify.js",
-		"Fastify.ts",
-		"Node",
-		"Node.js",
-		"Node.ts",
-		"ts",
-		"TypeScript",
-		"js",
-		"JavaScript"
-	],
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"files": [
-		"bin",
-		"dist",
-		"templates"
-	],
-	"bin": {
-		"create-stormode": "./bin/create-stormode"
-	},
-	"dependencies": {
-		"fs-extra": "^11.1.1",
-		"npm-registry-fetch": "^15.0.0",
-		"prompts": "^2.4.2",
-		"stormode-terminal": "^0.1.1"
-	},
-	"devDependencies": {
-		"@types/fs-extra": "^11.0.1",
-		"@types/npm-registry-fetch": "^8.0.4",
-		"@types/prompts": "^2.4.4"
-	}
+    "name": "create-stormode",
+    "version": "0.3.2",
+    "description": "Create a Stormode project with Stormode CLI",
+    "homepage": "https://stormode.dev",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/stormode/stormode.git",
+        "directory": "packages/create-stormode"
+    },
+    "license": "MIT",
+    "keywords": [
+        "Stormode",
+        "create-stormode",
+        "build tool",
+        "cli",
+        "Express",
+        "Express.js",
+        "Express.ts",
+        "Koa",
+        "Koa.js",
+        "Koa.ts",
+        "Fastify",
+        "Fastify.js",
+        "Fastify.ts",
+        "Node",
+        "Node.js",
+        "Node.ts",
+        "ts",
+        "TypeScript",
+        "js",
+        "JavaScript"
+    ],
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "bin",
+        "dist",
+        "templates"
+    ],
+    "bin": {
+        "create-stormode": "./bin/create-stormode"
+    },
+    "dependencies": {
+        "fs-extra": "^11.2.0",
+        "npm-registry-fetch": "^16.1.0",
+        "prompts": "^2.4.2",
+        "stormode-terminal": "workspace:^"
+    },
+    "devDependencies": {
+        "@types/fs-extra": "^11.0.4",
+        "@types/npm-registry-fetch": "^8.0.7",
+        "@types/prompts": "^2.4.9"
+    }
 }

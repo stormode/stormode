@@ -10,367 +10,367 @@ import terminal, { color } from "stormode-terminal";
 const cwd = process.cwd();
 
 const frameworks: Framework[] = [
-	{
-		title: "Vanilla",
-		value: "vanilla",
-		color: color.green,
-		variants: [
-			{
-				title: "Vanilla + TypeScript",
-				value: "ts",
-				color: color.blue,
-			},
-			{
-				title: "Vanilla + JavaScript",
-				value: "js",
-				color: color.yellow,
-			},
-		],
-	},
-	{
-		title: "Express",
-		value: "express",
-		color: color.yellow,
-		variants: [
-			{
-				title: "Express + TypeScript",
-				value: "ts",
-				color: color.blue,
-			},
-			{
-				title: "Express + JavaScript",
-				value: "js",
-				color: color.yellow,
-			},
-		],
-	},
-	{
-		title: "Koa",
-		value: "koa",
-		color: color.purple,
-		variants: [
-			{
-				title: "Koa + TypeScript",
-				value: "ts",
-				color: color.blue,
-			},
-			{
-				title: "Koa + JavaScript",
-				value: "js",
-				color: color.yellow,
-			},
-		],
-	},
-	{
-		title: "Fastify",
-		value: "fastify",
-		color: null,
-		variants: [
-			{
-				title: "Fastify + TypeScript",
-				value: "ts",
-				color: color.blue,
-			},
-			{
-				title: "Fastify + JavaScript",
-				value: "js",
-				color: color.yellow,
-			},
-		],
-	},
+    {
+        title: "Vanilla",
+        value: "vanilla",
+        color: color.green,
+        variants: [
+            {
+                title: "Vanilla + TypeScript",
+                value: "ts",
+                color: color.blue,
+            },
+            {
+                title: "Vanilla + JavaScript",
+                value: "js",
+                color: color.yellow,
+            },
+        ],
+    },
+    {
+        title: "Express",
+        value: "express",
+        color: color.yellow,
+        variants: [
+            {
+                title: "Express + TypeScript",
+                value: "ts",
+                color: color.blue,
+            },
+            {
+                title: "Express + JavaScript",
+                value: "js",
+                color: color.yellow,
+            },
+        ],
+    },
+    {
+        title: "Koa",
+        value: "koa",
+        color: color.purple,
+        variants: [
+            {
+                title: "Koa + TypeScript",
+                value: "ts",
+                color: color.blue,
+            },
+            {
+                title: "Koa + JavaScript",
+                value: "js",
+                color: color.yellow,
+            },
+        ],
+    },
+    {
+        title: "Fastify",
+        value: "fastify",
+        color: null,
+        variants: [
+            {
+                title: "Fastify + TypeScript",
+                value: "ts",
+                color: color.blue,
+            },
+            {
+                title: "Fastify + JavaScript",
+                value: "js",
+                color: color.yellow,
+            },
+        ],
+    },
 ];
 
 const getFramework = (): FwChoice[] => {
-	return frameworks.map((fw) => ({
-		title: fw.color ? fw.color(fw.title) : fw.title,
-		value: fw,
-	}));
+    return frameworks.map((fw) => ({
+        title: fw.color ? fw.color(fw.title) : fw.title,
+        value: fw,
+    }));
 };
 
 const getVariant = (fw: Framework): VrChoice[] => {
-	const choices: VrChoice[] = [];
-	fw.variants &&
-		fw.variants.map((variant) => {
-			choices.push({
-				title: variant.color(variant.title),
-				value: variant.value,
-			});
-		});
-	return choices;
+    const choices: VrChoice[] = [];
+    fw.variants &&
+        fw.variants.map((variant) => {
+            choices.push({
+                title: variant.color(variant.title),
+                value: variant.value,
+            });
+        });
+    return choices;
 };
 
 type PkgInfo = {
-	"dist-tags": {
-		latest: string;
-		[tag: string]: string;
-	};
+    "dist-tags": {
+        latest: string;
+        [tag: string]: string;
+    };
 };
 
 const lastVer = async (name: string): Promise<string> => {
-	try {
-		const registryUrl = "https://registry.npmjs.org/";
-		const packageUrl = `${registryUrl}${name}`;
+    try {
+        const registryUrl = "https://registry.npmjs.org/";
+        const packageUrl = `${registryUrl}${name}`;
 
-		const response = (await fetch.json(packageUrl)) as PkgInfo;
-		const latestVersion = response["dist-tags"]["latest"];
-		return "^" + latestVersion;
-	} catch (error: any) {
-		const ermsg = `Failed to get the latest version of ${name}`;
-		throw new Error(ermsg);
-	}
+        const response = (await fetch.json(packageUrl)) as PkgInfo;
+        const latestVersion = response["dist-tags"]["latest"];
+        return "^" + latestVersion;
+    } catch (error: any) {
+        const ermsg = `Failed to get the latest version of ${name}`;
+        throw new Error(ermsg);
+    }
 };
 
 const copyContent = async (source: string, target: string): Promise<void> => {
-	try {
-		await fse.ensureDir(target);
+    try {
+        await fse.ensureDir(target);
 
-		const files = await fse.readdir(source);
+        const files = await fse.readdir(source);
 
-		for (const file of files) {
-			const cSource = path.join(source, file);
-			const cTarget = path.join(target, file);
-			const stat = await fse.stat(cSource);
+        for (const file of files) {
+            const cSource = path.join(source, file);
+            const cTarget = path.join(target, file);
+            const stat = await fse.stat(cSource);
 
-			if (stat.isDirectory()) {
-				await copyContent(cSource, cTarget);
-			} else {
-				await fse.copyFile(cSource, cTarget);
-			}
-		}
-	} catch (error: any) {
-		const ermsg = `failed to copy content from ${source} to ${target}`;
-		throw new Error(ermsg);
-	}
+            if (stat.isDirectory()) {
+                await copyContent(cSource, cTarget);
+            } else {
+                await fse.copyFile(cSource, cTarget);
+            }
+        }
+    } catch (error: any) {
+        const ermsg = `failed to copy content from ${source} to ${target}`;
+        throw new Error(ermsg);
+    }
 };
 
 const main = async (): Promise<void> => {
-	try {
-		// welcome message
-		terminal.info(`Welcome to ${color.blue("Stormode")}`);
-		terminal.info("A Build Tool for Node");
+    try {
+        // welcome message
+        terminal.info(`Welcome to ${color.blue("Stormode")}`);
+        terminal.info("A Build Tool for Node");
 
-		// get answers
-		const answers: Answers = await prompts(
-			[
-				{
-					type: "text",
-					name: "name",
-					message: "Project name:",
-					initial: "stormode-project",
-				},
-				{
-					type: "select",
-					name: "framework",
-					message: "Select a framework:",
-					choices: getFramework(),
-				},
-				{
-					type: (fw: Framework) => {
-						return fw && (fw.variants ? "select" : null);
-					},
-					name: "variant",
-					message: "Select a variant:",
-					choices: (fw: Framework) => getVariant(fw),
-				},
-			],
-			{
-				onCancel: () => {
-					const err = "Installation cancelled";
-					throw new Error(err);
-				},
-			},
-		);
+        // get answers
+        const answers: Answers = await prompts(
+            [
+                {
+                    type: "text",
+                    name: "name",
+                    message: "Project name:",
+                    initial: "stormode-project",
+                },
+                {
+                    type: "select",
+                    name: "framework",
+                    message: "Select a framework:",
+                    choices: getFramework(),
+                },
+                {
+                    type: (fw: Framework) => {
+                        return fw && (fw.variants ? "select" : null);
+                    },
+                    name: "variant",
+                    message: "Select a variant:",
+                    choices: (fw: Framework) => getVariant(fw),
+                },
+            ],
+            {
+                onCancel: () => {
+                    const err = "Installation cancelled";
+                    throw new Error(err);
+                },
+            },
+        );
 
-		terminal.wait("Creating project...");
+        terminal.wait("Creating project...");
 
-		// name: any;
-		// framework: vanilla | express | koa;
-		// variant: ts | js;
-		const name: string = answers.name.toLowerCase();
-		const framework: string = answers.framework.value;
-		const variant: string = answers.variant;
+        // name: any;
+        // framework: vanilla | express | koa;
+        // variant: ts | js;
+        const name: string = answers.name.toLowerCase();
+        const framework: string = answers.framework.value;
+        const variant: string = answers.variant;
 
-		// for framework specific contents
-		const isExpress: boolean = framework === "express";
-		const isKoa: boolean = framework === "koa";
-		const isFastify: boolean = framework === "fastify";
+        // for framework specific contents
+        const isExpress: boolean = framework === "express";
+        const isKoa: boolean = framework === "koa";
+        const isFastify: boolean = framework === "fastify";
 
-		const isTs: boolean = variant === "ts";
+        const isTs: boolean = variant === "ts";
 
-		// stormode root
-		const packageDir: string = path.resolve(__dirname, "..");
-		// target project root
-		let targetDir: string = path.resolve(cwd, name);
+        // stormode root
+        const packageDir: string = path.resolve(__dirname, "..");
+        // target project root
+        let targetDir: string = path.resolve(cwd, name);
 
-		// change target project name on repeat
-		let counter: number = 2;
-		const existmsg: string = `Folder (${name}${
-			counter > 2 ? "-" + (counter - 1).toString() : ""
-		}) already exists`;
-		const existmsg2: string = `project renamed to (${name}-${counter})`;
+        // change target project name on repeat
+        let counter: number = 2;
+        const existmsg: string = `Folder (${name}${
+            counter > 2 ? "-" + (counter - 1).toString() : ""
+        }) already exists`;
+        const existmsg2: string = `project renamed to (${name}-${counter})`;
 
-		while (await fse.exists(targetDir)) {
-			targetDir = path.resolve(cwd, name + `-${counter}`);
-			terminal.info(`${existmsg}, ${existmsg2}`);
-			counter++;
-		}
+        while (await fse.exists(targetDir)) {
+            targetDir = path.resolve(cwd, name + `-${counter}`);
+            terminal.info(`${existmsg}, ${existmsg2}`);
+            counter++;
+        }
 
-		await fse.mkdir(targetDir);
+        await fse.mkdir(targetDir);
 
-		// fetch latest dependencies
-		terminal.wait("Fetching dependencies data...");
+        // fetch latest dependencies
+        terminal.wait("Fetching dependencies data...");
 
-		const dependencies = {
-			// express
-			...(isExpress
-				? {
-						express: await lastVer("express"),
-						cors: await lastVer("cors"),
-						"cookie-parser": await lastVer("cookie-parser"),
-				  }
-				: {}),
-			// koa
-			...(isKoa
-				? {
-						koa: await lastVer("koa"),
-						"koa-router": await lastVer("koa-router"),
-				  }
-				: {}),
-			// fastify
-			...(isFastify
-				? {
-						fastify: await lastVer("fastify"),
-				  }
-				: {}),
-		};
+        const dependencies = {
+            // express
+            ...(isExpress
+                ? {
+                      express: await lastVer("express"),
+                      cors: await lastVer("cors"),
+                      "cookie-parser": await lastVer("cookie-parser"),
+                  }
+                : {}),
+            // koa
+            ...(isKoa
+                ? {
+                      koa: await lastVer("koa"),
+                      "koa-router": await lastVer("koa-router"),
+                  }
+                : {}),
+            // fastify
+            ...(isFastify
+                ? {
+                      fastify: await lastVer("fastify"),
+                  }
+                : {}),
+        };
 
-		const tsDevDependencies = {
-			// express
-			...(isExpress
-				? {
-						"@types/express": await lastVer("@types/express"),
-						"@types/cors": await lastVer("@types/cors"),
-						"@types/cookie-parser": await lastVer(
-							"@types/cookie-parser",
-						),
-				  }
-				: {}),
-			// koa
-			...(isKoa
-				? {
-						"@types/koa": await lastVer("@types/koa"),
-						"@types/koa-router": await lastVer("@types/koa-router"),
-				  }
-				: {}),
-			"@types/node": await lastVer("@types/node"),
-			typescript: await lastVer("typescript"),
-		};
+        const tsDevDependencies = {
+            // express
+            ...(isExpress
+                ? {
+                      "@types/express": await lastVer("@types/express"),
+                      "@types/cors": await lastVer("@types/cors"),
+                      "@types/cookie-parser": await lastVer(
+                          "@types/cookie-parser",
+                      ),
+                  }
+                : {}),
+            // koa
+            ...(isKoa
+                ? {
+                      "@types/koa": await lastVer("@types/koa"),
+                      "@types/koa-router": await lastVer("@types/koa-router"),
+                  }
+                : {}),
+            "@types/node": await lastVer("@types/node"),
+            typescript: await lastVer("typescript"),
+        };
 
-		// package.json
-		const packageJson = {
-			name: name,
-			version: "1.0.0",
-			private: true,
-			scripts: {
-				dev: "stormode dev",
-				build: "stormode build",
-				preview: "stormode preview",
-			},
-			dependencies: dependencies,
-			devDependencies: {
-				...(isTs ? tsDevDependencies : {}),
-				stormode: await lastVer("stormode"),
-			},
-		};
+        // package.json
+        const packageJson = {
+            name: name,
+            version: "1.0.0",
+            private: true,
+            scripts: {
+                dev: "stormode dev",
+                build: "stormode build",
+                preview: "stormode preview",
+            },
+            dependencies: dependencies,
+            devDependencies: {
+                ...(isTs ? tsDevDependencies : {}),
+                stormode: await lastVer("stormode"),
+            },
+        };
 
-		const packageJsonData: string = JSON.stringify(packageJson, null, 4);
-		await fse.writeFile(
-			path.join(targetDir, "package.json"),
-			packageJsonData,
-		);
+        const packageJsonData: string = JSON.stringify(packageJson, null, 4);
+        await fse.writeFile(
+            path.join(targetDir, "package.json"),
+            packageJsonData,
+        );
 
-		// tsconfig.json
-		if (isTs) {
-			const tsconfigJson = {
-				compilerOptions: {
-					strict: true,
-					alwaysStrict: true,
-					module: "commonjs",
-					target: isKoa ? "es6" : "es5",
-					moduleResolution: "node",
-					esModuleInterop: true,
-					resolveJsonModule: true,
-					skipLibCheck: true,
-					baseUrl: ".",
-					paths: {
-						"@/*": ["./src/*"],
-					},
-				},
-				include: ["src"],
-			};
+        // tsconfig.json
+        if (isTs) {
+            const tsconfigJson = {
+                compilerOptions: {
+                    strict: true,
+                    alwaysStrict: true,
+                    module: "commonjs",
+                    target: isKoa ? "es6" : "es5",
+                    moduleResolution: "node",
+                    esModuleInterop: true,
+                    resolveJsonModule: true,
+                    skipLibCheck: true,
+                    baseUrl: ".",
+                    paths: {
+                        "@/*": ["./src/*"],
+                    },
+                },
+                include: ["src"],
+            };
 
-			const tsconfigJsonData: string = JSON.stringify(
-				tsconfigJson,
-				null,
-				4,
-			);
-			await fse.writeFile(
-				path.join(targetDir, "tsconfig.json"),
-				tsconfigJsonData,
-			);
-		}
+            const tsconfigJsonData: string = JSON.stringify(
+                tsconfigJson,
+                null,
+                4,
+            );
+            await fse.writeFile(
+                path.join(targetDir, "tsconfig.json"),
+                tsconfigJsonData,
+            );
+        }
 
-		terminal.wait("Creating files...");
+        terminal.wait("Creating files...");
 
-		// copy default files
-		const templateDefault = path.resolve(
-			packageDir,
-			"templates",
-			"default",
-		);
+        // copy default files
+        const templateDefault = path.resolve(
+            packageDir,
+            "templates",
+            "default",
+        );
 
-		// .gitignore
-		await fse.copy(
-			path.join(templateDefault, "_gitignore"),
-			path.join(targetDir, ".gitignore"),
-		);
+        // .gitignore
+        await fse.copy(
+            path.join(templateDefault, "_gitignore"),
+            path.join(targetDir, ".gitignore"),
+        );
 
-		// .env.development
-		await fse.copy(
-			path.join(templateDefault, ".env.development"),
-			path.join(targetDir, ".env.development"),
-		);
+        // .env.development
+        await fse.copy(
+            path.join(templateDefault, ".env.development"),
+            path.join(targetDir, ".env.development"),
+        );
 
-		// .env.production
-		await fse.copy(
-			path.join(templateDefault, ".env.production"),
-			path.join(targetDir, ".env.production"),
-		);
+        // .env.production
+        await fse.copy(
+            path.join(templateDefault, ".env.production"),
+            path.join(targetDir, ".env.production"),
+        );
 
-		// stormode.config.js
-		const SmConfigName = `stormode.config.${isTs ? "ts" : "js"}`;
+        // stormode.config.js
+        const SmConfigName = `stormode.config.${isTs ? "ts" : "js"}`;
 
-		await fse.copy(
-			path.join(templateDefault, SmConfigName),
-			path.join(targetDir, SmConfigName),
-		);
+        await fse.copy(
+            path.join(templateDefault, SmConfigName),
+            path.join(targetDir, SmConfigName),
+        );
 
-		// specific template
-		const template: string = path.resolve(
-			packageDir,
-			"templates",
-			framework ?? "vanilla",
-			variant ?? "js",
-		);
+        // specific template
+        const template: string = path.resolve(
+            packageDir,
+            "templates",
+            framework ?? "vanilla",
+            variant ?? "js",
+        );
 
-		await copyContent(template, targetDir);
+        await copyContent(template, targetDir);
 
-		// done
-		terminal.ready("Project created successfully");
-	} catch (err: any) {
-		terminal.error(err.message);
-		return;
-	}
+        // done
+        terminal.ready("Project created successfully");
+    } catch (err: any) {
+        terminal.error(err.message);
+        return;
+    }
 };
 
 main();
