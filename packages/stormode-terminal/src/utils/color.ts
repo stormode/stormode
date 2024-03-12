@@ -1,3 +1,5 @@
+import type { Color } from "#/@types/color";
+
 const colors = {
     reset: "\x1b[0m",
 
@@ -31,31 +33,31 @@ const useColor = (color: keyof typeof colors, text: string): string => {
     return `${colors[color]}${text}${colors.reset}`;
 };
 
-const color = {
+const color: Color = {
     // red
-    redLight: (val: string) => useColor("redLight", val),
-    red: (val: string) => useColor("red", val),
-    redDark: (val: string) => useColor("redDark", val),
+    redLight: (val: string): string => useColor("redLight", val),
+    red: (val: string): string => useColor("red", val),
+    redDark: (val: string): string => useColor("redDark", val),
 
     // yellow
-    yellowLight: (val: string) => useColor("yellowLight", val),
-    yellow: (val: string) => useColor("yellow", val),
-    yellowDark: (val: string) => useColor("yellowDark", val),
+    yellowLight: (val: string): string => useColor("yellowLight", val),
+    yellow: (val: string): string => useColor("yellow", val),
+    yellowDark: (val: string): string => useColor("yellowDark", val),
 
     // blue
-    blueLight: (val: string) => useColor("blueLight", val),
-    blue: (val: string) => useColor("blue", val),
-    blueDark: (val: string) => useColor("blueDark", val),
+    blueLight: (val: string): string => useColor("blueLight", val),
+    blue: (val: string): string => useColor("blue", val),
+    blueDark: (val: string): string => useColor("blueDark", val),
 
     // green
-    greenLight: (val: string) => useColor("greenLight", val),
-    green: (val: string) => useColor("green", val),
-    greenDark: (val: string) => useColor("greenDark", val),
+    greenLight: (val: string): string => useColor("greenLight", val),
+    green: (val: string): string => useColor("green", val),
+    greenDark: (val: string): string => useColor("greenDark", val),
 
     // purple
-    purpleLight: (val: string) => useColor("purpleLight", val),
-    purple: (val: string) => useColor("purple", val),
-    purpleDark: (val: string) => useColor("purpleDark", val),
+    purpleLight: (val: string): string => useColor("purpleLight", val),
+    purple: (val: string): string => useColor("purple", val),
+    purpleDark: (val: string): string => useColor("purpleDark", val),
 };
 
-export default color;
+export { color };

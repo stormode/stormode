@@ -84,13 +84,41 @@ terminal.cancel("Operation cancelled");
 
 ## Customize
 
-You may import the terminal into your `console.log` or `new Error`:
+You may customize the terminal for fit your needs:
 
-```javascript
-console.log(terminal.info("Hello!", { mode: "string" }));
+```typescript
+import type { Config, Logs } from "stormode-terminal";
 
-// Output:
-// - [info] Hello!
+const config: Config = {
+    mute: true,
+    time: true,
+};
+
+console.log(terminal.info("Hello!", config));
+
+// or
+
+const tml: Logs = terminal.withConfig({
+    mute: true,
+    time: true,
+});
+
+console.log(tml.info("Hello!"));
+```
+
+Or you can make your own terminal log:
+
+```typescript
+import { custom } from "stormode-terminal";
+
+const ok = custom({
+    title: "ok",
+    config: {
+        time: true,
+    }
+});
+
+ok("it's ok!");
 ```
 
 ## Color Functions
