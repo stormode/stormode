@@ -1,4 +1,10 @@
-import type { Framework, FwChoice, VrChoice, Answers } from "./@types/question";
+import type {
+    Framework,
+    FwChoice,
+    VrChoice,
+    Answers,
+    Variant,
+} from "./@types/question";
 
 import * as path from "node:path";
 
@@ -7,7 +13,7 @@ import prompts from "prompts";
 import fetch from "npm-registry-fetch";
 import terminal, { color } from "stormode-terminal";
 
-const cwd = process.cwd();
+const cwd: string = process.cwd();
 
 const frameworks: Framework[] = [
     {
@@ -81,16 +87,18 @@ const frameworks: Framework[] = [
 ];
 
 const getFramework = (): FwChoice[] => {
-    return frameworks.map((fw) => ({
-        title: fw.color ? fw.color(fw.title) : fw.title,
-        value: fw,
-    }));
+    return frameworks.map(
+        (fw: Framework): FwChoice => ({
+            title: fw.color ? fw.color(fw.title) : fw.title,
+            value: fw,
+        }),
+    );
 };
 
 const getVariant = (fw: Framework): VrChoice[] => {
     const choices: VrChoice[] = [];
     fw.variants &&
-        fw.variants.map((variant) => {
+        fw.variants.map((variant: Variant): void => {
             choices.push({
                 title: variant.color(variant.title),
                 value: variant.value,
@@ -108,14 +116,14 @@ type PkgInfo = {
 
 const lastVer = async (name: string): Promise<string> => {
     try {
-        const registryUrl = "https://registry.npmjs.org/";
-        const packageUrl = `${registryUrl}${name}`;
+        const registryUrl: string = "https://registry.npmjs.org/";
+        const packageUrl: string = `${registryUrl}${name}`;
 
-        const response = (await fetch.json(packageUrl)) as PkgInfo;
-        const latestVersion = response["dist-tags"]["latest"];
+        const response: PkgInfo = (await fetch.json(packageUrl)) as PkgInfo;
+        const latestVersion: string = response["dist-tags"]["latest"];
         return "^" + latestVersion;
-    } catch (error: any) {
-        const ermsg = `Failed to get the latest version of ${name}`;
+    } catch (e: unknown) {
+        const ermsg: string = `Failed to get the latest version of ${name}`;
         throw new Error(ermsg);
     }
 };
@@ -124,12 +132,12 @@ const copyContent = async (source: string, target: string): Promise<void> => {
     try {
         await fse.ensureDir(target);
 
-        const files = await fse.readdir(source);
+        const files: string[] = await fse.readdir(source);
 
         for (const file of files) {
-            const cSource = path.join(source, file);
-            const cTarget = path.join(target, file);
-            const stat = await fse.stat(cSource);
+            const cSource: string = path.join(source, file);
+            const cTarget: string = path.join(target, file);
+            const stat: fse.Stats = await fse.stat(cSource);
 
             if (stat.isDirectory()) {
                 await copyContent(cSource, cTarget);
@@ -137,8 +145,8 @@ const copyContent = async (source: string, target: string): Promise<void> => {
                 await fse.copyFile(cSource, cTarget);
             }
         }
-    } catch (error: any) {
-        const ermsg = `failed to copy content from ${source} to ${target}`;
+    } catch (e: unknown) {
+        const ermsg: string = `failed to copy content from ${source} to ${target}`;
         throw new Error(ermsg);
     }
 };
@@ -170,11 +178,11 @@ const main = async (): Promise<void> => {
                     },
                     name: "variant",
                     message: "Select a variant:",
-                    choices: (fw: Framework) => getVariant(fw),
+                    choices: (fw: Framework): VrChoice[] => getVariant(fw),
                 },
             ],
             {
-                onCancel: () => {
+                onCancel: (): void => {
                     const err = "Installation cancelled";
                     throw new Error(err);
                 },
@@ -293,18 +301,18 @@ const main = async (): Promise<void> => {
         if (isTs) {
             const tsconfigJson = {
                 compilerOptions: {
-                    strict: true,
-                    alwaysStrict: true,
-                    module: "commonjs",
-                    target: isKoa ? "es6" : "es5",
-                    moduleResolution: "node",
-                    esModuleInterop: true,
-                    resolveJsonModule: true,
-                    skipLibCheck: true,
+                    target: isKoa ? "ES6" : "ES5",
+                    module: "CommonJS",
+                    moduleResolution: "Node",
                     baseUrl: ".",
                     paths: {
-                        "@/*": ["./src/*"],
+                        "#/*": ["./src/*"],
                     },
+                    resolveJsonModule: true,
+                    esModuleInterop: true,
+                    strict: true,
+                    alwaysStrict: true,
+                    skipLibCheck: true,
                 },
                 include: ["src"],
             };
@@ -314,6 +322,7 @@ const main = async (): Promise<void> => {
                 null,
                 4,
             );
+
             await fse.writeFile(
                 path.join(targetDir, "tsconfig.json"),
                 tsconfigJsonData,
@@ -323,7 +332,7 @@ const main = async (): Promise<void> => {
         terminal.wait("Creating files...");
 
         // copy default files
-        const templateDefault = path.resolve(
+        const templateDefault: string = path.resolve(
             packageDir,
             "templates",
             "default",
@@ -348,7 +357,7 @@ const main = async (): Promise<void> => {
         );
 
         // stormode.config.js
-        const SmConfigName = `stormode.config.${isTs ? "ts" : "js"}`;
+        const SmConfigName: string = `stormode.config.${isTs ? "ts" : "js"}`;
 
         await fse.copy(
             path.join(templateDefault, SmConfigName),
@@ -367,9 +376,8 @@ const main = async (): Promise<void> => {
 
         // done
         terminal.ready("Project created successfully");
-    } catch (err: any) {
-        terminal.error(err.message);
-        return;
+    } catch (e: unknown) {
+        terminal.error(e instanceof Error ? e.message : String(e));
     }
 };
 

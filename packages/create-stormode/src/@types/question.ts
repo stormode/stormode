@@ -25,4 +25,4 @@ type VrChoice = {
 
 type Answers = prompts.Answers<"name" | "framework" | "variant">;
 
-export type { Framework, FwChoice, VrChoice, Answers };
+export type { Variant, Framework, FwChoice, VrChoice, Answers };
