@@ -1,3 +1,3 @@
 type envs = { [key: string]: string };
 
-export default envs;
+export type { envs };

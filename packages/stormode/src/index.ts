@@ -1,53 +1,51 @@
-import type { Config, ImpartialConfig } from "./@types/config";
-import type { DevArgs, BuildArgs, PreviewArgs } from "./@types/args";
-
-import * as os from "node:os";
-import * as path from "node:path";
+import type { Mode } from "#/@types/mode";
+import type { BuildArgs, DevArgs, PreviewArgs } from "#/@types/args";
+import type { ImpartialConfig, Config } from "#/@types/config";
 
 import * as fse from "fs-extra";
 import { Command } from "commander";
-import terminal from "stormode-terminal";
 
-import configFinder from "./utils/config/finder";
-import configLoader from "./utils/config/loader";
-import configCliApplier from "./utils/config/applier";
-import envLoader from "./utils/envs/loader";
+import { cache } from "#/configs/env";
 
-import dev from "./commands/dev";
-import build from "./commands/build";
-import preview from "./commands/preview";
+import { configLoader } from "#/utils/config/loader";
+import { envLoader } from "#/utils/env/loader";
 
-const cwd = process.cwd();
+import { dev } from "#/commands/dev";
+import { build } from "#/commands/build";
+import { preview } from "#/commands/preview";
 
-const main = async (): Promise<void> => {
+(async (): Promise<void> => {
     try {
         // declarations
-        const program = new Command();
+        const program: Command = new Command();
 
-        let mode: string | null = null;
-
-        let devArgs: DevArgs = {};
-        let buildArgs: BuildArgs = {};
-        let previewArgs: PreviewArgs = {};
+        let mode: Mode = "dev";
+        let args: Partial<DevArgs | BuildArgs | PreviewArgs> = {};
 
         // info
         program
             .name("stormode")
             .description("Stormode, A Build Tool for Node")
-            .version("v0.3.1", "-v, --version", "get stormode version");
+            .version("v0.4.0", "-v, --version", "get stormode version");
 
         // dev
         program
             .command("dev")
             .description("development server")
-            .option("-c, --config <directory + file>", "config file path")
+            // base
+            .option("-c, --config <path>", "config file path")
+            .option(
+                "--withtime, --withTime, --withTime <utc | local>",
+                "terminal with time",
+            )
+            // dev
             .option("--rootdir, --rootDir <directory>", "input directory")
             .option("--outdir, --outDir <directory>", "output directory")
             .option("--index <file>", "index file name")
             .option("--tsconfig <directory + file>", "tsconfig.json path")
-            .action(async (args: DevArgs) => {
+            .action(async (_args: DevArgs): Promise<void> => {
                 mode = "dev";
-                devArgs = args;
+                args = _args;
                 process.env.NODE_ENV = "development";
             });
 
@@ -55,59 +53,60 @@ const main = async (): Promise<void> => {
         program
             .command("build")
             .description("project builder")
-            .option("-c, --config <directory + file>", "config file path")
+            // base
+            .option("-c, --config <path>", "config file path")
+            .option(
+                "--withtime, --withTime, --withTime <utc | local>",
+                "terminal with time",
+            )
+            // build
             .option("-e, --env <name>", "environment name")
             .option("--rootdir, --rootDir <directory>", "input directory")
             .option("--outdir, --outDir <directory>", "output directory")
             .option("--index <file>", "index file name")
+            .option("--platform <node | browser>", "platform")
+            .option("--bundle", "bundle code")
             .option("--minify", "minify code")
-            .option("--map, --sourcemap", "generate sourcemap")
-            .option("--tsconfig <directory + file>", "tsconfig.json path")
-            .action(async (args: BuildArgs) => {
+            .option("--map, --sourcemap, --sourceMap", "generate sourcemap")
+            .option("--tsconfig <path>", "tsconfig.json path")
+            .action(async (_args: BuildArgs): Promise<void> => {
                 mode = "build";
-                buildArgs = args;
-                process.env.NODE_ENV = args.env ?? "production";
+                args = _args;
+                process.env.NODE_ENV = _args.env ?? "production";
             });
 
         // preview
         program
             .command("preview")
             .description("production preview")
-            .option("-c, --config <directory + file>", "config file path")
+            //base
+            .option("-c, --config <path>", "config file path")
+            .option(
+                "--withtime, --withTime, --withTime <utc | local>",
+                "terminal with time",
+            )
+            // preview
             .option("--outdir, --outDir <directory>", "output path")
             .option("--index <file>", "index file name")
-            .action(async (args: PreviewArgs) => {
+            .action(async (_args: PreviewArgs): Promise<void> => {
                 mode = "preview";
-                previewArgs = args;
+                args = _args;
             });
 
         // parse
         program.parse();
 
-        // god mode
-        if (!mode) {
-            throw new Error("Command not found");
-        }
+        // ensure temp folder
+        await fse.ensureDir(cache);
 
-        // get config
-        const configPath: string = await configFinder();
-        const configRaw: Config | null = await configLoader(
-            devArgs.config ||
-                buildArgs.config ||
-                previewArgs.config ||
-                configPath,
-        );
-
-        // apply config from CLI
-        const config: ImpartialConfig = await configCliApplier(
-            configRaw,
-            mode,
-            devArgs,
-            buildArgs,
-            previewArgs,
-        );
+        // load config
+        const config: ImpartialConfig = await configLoader({
+            mode: mode,
+            args: args,
+        });
 
         // preview
+        // @ts-expect-error program will change the mode
         if (mode === "preview") {
             return await preview(config);
         }
@@ -120,23 +119,16 @@ const main = async (): Promise<void> => {
             case "dev":
                 return await dev(config);
             // build
+            // @ts-expect-error program will change the mode
             case "build":
                 return await build(config);
             default:
-                throw new Error("Unvalid command");
+                throw new Error("Invalid command");
         }
-    } catch (err: any) {
-        const osTempDir: string = path.join(os.tmpdir(), "stormode");
-        const tempDir: string = path.join(cwd, ".stormode", ".temp");
-        if (await fse.exists(osTempDir)) {
-            await fse.rm(osTempDir, { recursive: true });
-        }
-        if (await fse.exists(tempDir)) {
-            await fse.rm(tempDir, { recursive: true });
-        }
-        terminal.error(err.message);
+    } catch (e: unknown) {
+        const { terminal } = await import("#/utils/terminal");
+        terminal.error(e instanceof Error ? e.message : String(e));
     }
-};
+})();
 
-main();
-export type { Config };
+export { Config };

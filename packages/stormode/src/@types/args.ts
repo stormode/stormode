@@ -1,29 +1,36 @@
 type GlobalArgs = {
-    config?: string;
+    config: string;
+    withTime: "utc" | "local" | "";
 };
 
-type DevArgs = GlobalArgs & {
-    rootDir?: string;
-    outDir?: string;
-    index?: string;
-    tsconfig?: string;
+type DevArgsBase = {
+    rootDir: string;
+    outDir: string;
+    index: string;
+    tsconfig: string;
 };
 
-type BuildArgs = GlobalArgs & {
-    env?: string;
-    rootDir?: string;
-    outDir?: string;
-    index?: string;
-    platform?: string;
-    bundle?: boolean;
-    minify?: boolean;
-    sourcemap?: boolean;
-    tsconfig?: string;
+type BuildArgsBase = {
+    env: string;
+    rootDir: string;
+    outDir: string;
+    index: string;
+    platform: "node" | "browser";
+    bundle: boolean;
+    minify: boolean;
+    sourceMap: boolean;
+    tsconfig: string;
 };
 
-type PreviewArgs = GlobalArgs & {
-    outDir?: string;
-    index?: string;
+type PreviewArgsBase = {
+    outDir: string;
+    index: string;
 };
+
+type DevArgs = GlobalArgs & DevArgsBase;
+
+type BuildArgs = GlobalArgs & BuildArgsBase;
+
+type PreviewArgs = GlobalArgs & PreviewArgsBase;
 
 export type { DevArgs, BuildArgs, PreviewArgs };

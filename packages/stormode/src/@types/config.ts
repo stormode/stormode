@@ -1,26 +1,30 @@
 /**
  * base configs
  */
-type base = {
+type BaseConfig = {
     /**
-     * input directory
-     * default: src
+     * @description terminal with time
+     * @default false
+     */
+    withTime: "utc" | "local" | boolean;
+    /**
+     * @description input directory
+     * @default "src"
      */
     rootDir: string;
     /**
-     * output directory
-     * default: .stormode
+     * @description output directory
+     * @default ".stormode"
      */
     outDir: string;
-    // index file, defualt: index.ts/index.js
     /**
-     * index file
-     * default: index.ts / index.js
+     * @description index file
+     * @default "index.ts" | "index.js"
      */
     index: string;
     /**
-     * tsconfig.json path
-     * default: tsconfig.json
+     * @description tsconfig.json path
+     * @default "tsconfig.json"
      */
     tsconfig: string;
 };
@@ -28,15 +32,15 @@ type base = {
 /**
  * server configs
  */
-type server = {
+type ServerConfig = {
     /**
-     * directories / files to monitor other than rootDir
-     * default: []
+     * @description directories / files to monitor other than rootDir
+     * @default []
      */
     watch: string[];
     /**
-     * files to ignore based on watch
-     * default: []
+     * @description files to ignore based on watch
+     * @default []
      */
     ignore: string[];
 };
@@ -44,32 +48,49 @@ type server = {
 /**
  * build configs
  */
-type build = {
+type BuildConfig = {
     /**
-     * minify code
-     * default: false
+     * @description platform
+     * @default "node"
+     */
+    platform: "node" | "browser";
+    /**
+     * @description bundle code
+     * @default false
+     */
+    bundle: boolean;
+    /**
+     * @description minify code
+     * @default false
      */
     minify: boolean;
     /**
-     * generate sourcemap on build
-     * default: false
+     * @deprecated
+     * @use sourceMap
      */
     sourcemap: boolean;
     /**
-     * tsconfig.json path with higer priority
-     * default: tsconfig.json
+     * @description generate sourcemap on build
+     * @default false
+     */
+    sourceMap: boolean;
+    /**
+     * @description tsconfig.json path with higer priority
+     * @default "tsconfig.json"
      */
     tsconfig: string;
 };
 
-type Config = Partial<base> & {
-    server?: Partial<server>;
-    build?: Partial<build>;
-};
+type Config = Partial<
+    BaseConfig & {
+        server: Partial<ServerConfig>;
+        build: Partial<BuildConfig>;
+    }
+>;
 
-type ImpartialConfig = base & {
-    server: server;
-    build: build;
+type ImpartialConfig = BaseConfig & {
+    server: ServerConfig;
+    build: BuildConfig;
 };
 
 export type { Config, ImpartialConfig };

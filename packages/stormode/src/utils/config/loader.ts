@@ -1,95 +1,210 @@
-import * as os from "node:os";
+import type { CompilerOptions } from "typescript";
+import type { Mode } from "#/@types/mode";
+import type { Config, ImpartialConfig } from "#/@types/config";
+import type { BuildArgs, DevArgs, PreviewArgs } from "#/@types/args";
+
 import * as path from "node:path";
 
 import * as fse from "fs-extra";
-import terminal from "stormode-terminal";
 
-const cwd = process.cwd();
+import { cache, cwd, root } from "#/configs/env";
+import { tsExtensions } from "#/configs/extension";
 
-const importErr =
-    "Unable to import the stormode config file, Please ensure that the config file exists and is in the correct format.";
-const readErr =
-    "Unable to read stormode config file, Please make sure you have a valid config setup or the correct format.";
+import { endsWithList } from "#/functions/endsWithList";
+import { getTranspiledName } from "#/functions/getTranspiledName";
 
-const removeTemp = async (tempPath: string | null) => {
-    if (!tempPath) return;
-    if (await fse.exists(tempPath)) {
-        await fse.rm(tempPath, { recursive: true });
-    }
+type ConfigLoaderOptions = {
+    mode: Mode;
+    args: Partial<DevArgs | BuildArgs | PreviewArgs>;
 };
 
-const configLoader = async (configPath: string): Promise<object | null> => {
-    // not found
-    if (!(await fse.exists(configPath))) {
-        terminal.info("Config loaded as default");
-        return null;
+type ConfigApplierOptions = {
+    config: Config;
+    mode: Mode;
+    args: Partial<DevArgs | BuildArgs | PreviewArgs>;
+};
+
+const importErr: string =
+    "Unable to import the stormode config file, Please ensure that the config file exists and is in the correct format.";
+const readErr: string =
+    "Unable to read stormode config file, Please make sure you have a valid config setup or the correct format.";
+
+const finder = async (): Promise<string> => {
+    // declarations
+    const base: string = "stormode.config.";
+    const extensions: string[] = ["ts", "js", "cjs"];
+
+    for (const ext of extensions) {
+        const name: string = `${base}${ext}`;
+        const configPath: string = path.resolve(cwd, name);
+        if (await fse.pathExists(configPath)) return name;
+    }
+
+    return "";
+};
+
+const applier = async (
+    options: ConfigApplierOptions,
+): Promise<ImpartialConfig> => {
+    // declarations
+    const { config, mode, args } = options;
+
+    if (typeof args.withTime === "string")
+        config.withTime = args.withTime === "" ? "local" : args.withTime;
+
+    // dev
+    if (mode === "dev") {
+        const _args = args as Partial<DevArgs>;
+        if (_args.rootDir) config.rootDir = _args.rootDir;
+        if (_args.outDir) config.outDir = _args.outDir;
+        if (_args.index) config.index = _args.index;
+        if (_args.tsconfig) config.tsconfig = _args.tsconfig;
+    }
+
+    // build
+    if (mode === "build") {
+        const _args = args as Partial<BuildArgs>;
+        if (!config.build) config.build = {};
+        if (_args.env) process.env.NODE_ENV = _args.env;
+        if (_args.rootDir) config.rootDir = _args.rootDir;
+        if (_args.outDir) config.outDir = _args.outDir;
+        if (_args.index) config.index = _args.index;
+        if (_args.platform) config.build.platform = _args.platform;
+        config.build.bundle = _args.bundle;
+        config.build.minify = _args.minify;
+        config.build.sourceMap = _args.sourceMap;
+        if (_args.tsconfig) config.build.tsconfig = _args.tsconfig;
+    }
+
+    // preview
+    if (mode === "preview") {
+        const _args = args as Partial<PreviewArgs>;
+        if (_args.outDir) config.outDir = _args.outDir;
+        if (_args.index) config.index = _args.index;
+    }
+
+    // check index.ts / index.js
+    const indexPath: string = path.join(
+        root,
+        config.rootDir ?? "src",
+        "index.ts",
+    );
+    const indexFallback: "index.ts" | "index.js" = (await fse.exists(indexPath))
+        ? "index.ts"
+        : "index.js";
+
+    // result
+    const res: ImpartialConfig = {
+        withTime: config.withTime ?? false,
+        rootDir: config.rootDir ?? "src",
+        outDir: config.outDir ?? "dist",
+        index: config.index ?? indexFallback,
+        tsconfig: config.tsconfig ?? "tsconfig.json",
+        server: {
+            watch: config.server?.watch ?? [],
+            ignore: config.server?.ignore ?? [],
+        },
+        build: {
+            platform: config.build?.platform ?? "node",
+            bundle: config.build?.bundle ?? false,
+            minify: config.build?.minify ?? false,
+            sourcemap: config.build?.sourceMap ?? false,
+            sourceMap: config.build?.sourceMap ?? false,
+            tsconfig: config.build?.tsconfig ?? "tsconfig.json",
+        },
+    };
+
+    // set env
+    process.env.STORMODE_TIME =
+        typeof res.withTime === "boolean"
+            ? res.withTime
+                ? "1"
+                : "0"
+            : res.withTime;
+
+    return res;
+};
+
+const configLoader = async (
+    options: ConfigLoaderOptions,
+): Promise<ImpartialConfig> => {
+    // declarations
+    const configName: string = await finder();
+
+    // load default if not exist
+    if (configName === "") {
+        const result: ImpartialConfig = await applier({
+            config: {},
+            mode: options.mode,
+            args: options.args,
+        });
+
+        return result;
     }
 
     // declarations
-    const displyName = configPath;
-    let configPathRaw = path.resolve(cwd, configPath);
-    let tempConfigPath: string | null = null;
-    let tempConfigFile: string | null = null;
+    const sourcePath: string = path.join(root, configName);
+    let targetPath: string = path.join(root, configName);
 
-    // if typescript
-    if (path.extname(configPathRaw) === ".ts") {
-        const typescript = await import("typescript");
-        const configFileName = path.basename(configPathRaw, ".ts");
+    // if the config is a ts file
+    if (endsWithList(configName, tsExtensions)) {
+        const targetName: string = getTranspiledName(configName);
+        targetPath = path.join(cache, targetName);
 
-        // create temp
-        tempConfigPath = path.join(os.tmpdir(), "stormode", "config");
-        await fse.mkdir(tempConfigPath, { recursive: true });
+        let typescript: typeof import("typescript") | undefined;
 
-        // temp file path
-        const tempConfigFileCJS = path.join(
-            tempConfigPath,
-            `${configFileName}.cjs`,
-        );
+        try {
+            typescript = await import("typescript");
+        } catch (e: unknown) {
+            throw new Error("TypeScript dependency not found!");
+        }
 
         // typescript config
-        const tsConfig = {
-            compilerOptions: {
-                target: typescript.ScriptTarget.ES5,
-                module: typescript.ModuleKind.CommonJS,
-            },
+        const compilerOptions: CompilerOptions = {
+            target: typescript.ScriptTarget.ES5,
+            module: typescript.ModuleKind.CommonJS,
+            sourceMap: false,
+            inlineSourceMap: true,
+            inlineSources: false,
         };
 
         // transpile
-        const tsTranspiled = typescript.transpileModule(
-            await fse.readFile(configPath, "utf-8"),
-            {
-                compilerOptions: tsConfig.compilerOptions,
-            },
+        const transpiled: string = typescript.transpile(
+            await fse.readFile(sourcePath, "utf-8"),
+            compilerOptions,
+            sourcePath,
         );
 
         // result
-        await fse.writeFile(tempConfigFileCJS, tsTranspiled.outputText);
+        await fse.writeFile(targetPath, transpiled);
 
-        tempConfigFile = tempConfigFileCJS;
-        configPathRaw = tempConfigFile;
+        // check if exist
+        if (!(await fse.exists(targetPath))) {
+            throw new Error("Config file not found after transpilation!");
+        }
     }
 
     // import
-    const configModule = await require(configPathRaw);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-var-requires
+    const configModule: any = await require(targetPath);
+    if (!configModule) throw new Error(importErr);
 
-    if (!configModule) {
-        await removeTemp(tempConfigPath);
-        throw new Error(importErr);
-    }
+    // load
+    const config: Config = configModule.default ?? configModule;
+    if (typeof config !== "object") throw new Error(readErr);
 
-    // get module
-    const config = configModule.default ?? configModule;
-
-    if (typeof config !== "object") {
-        await removeTemp(tempConfigPath);
-        throw new Error(readErr);
-    }
-
-    await removeTemp(tempConfigPath);
+    // apply
+    const result: ImpartialConfig = await applier({
+        config: config,
+        mode: options.mode,
+        args: options.args,
+    });
 
     // result
-    terminal.info(`Config loaded from ${displyName}`);
-    return config;
+    const { terminal } = await import("#/utils/terminal");
+    terminal.info(`Config loaded from ${configName}`);
+
+    return result;
 };
 
-export default configLoader;
+export { configLoader };

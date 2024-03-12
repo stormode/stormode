@@ -1,6 +1,6 @@
-import type envs from "../../@types/env";
+import type { envs } from "#/@types/env";
 
-const envGetter = async () => {
+const envGetter = async (): Promise<envs> => {
     const envs: envs = {};
 
     // put envs
@@ -12,7 +12,7 @@ const envGetter = async () => {
         envs[`process.env.${p}`] = JSON.stringify(process.env[p]);
     }
 
-    return await envs;
+    return envs;
 };
 
-export default envGetter;
+export { envGetter };

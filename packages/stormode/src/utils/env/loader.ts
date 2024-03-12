@@ -2,11 +2,11 @@ import * as path from "node:path";
 
 import * as fse from "fs-extra";
 import dotenv from "dotenv";
-import terminal from "stormode-terminal";
 
-const cwd = process.cwd();
+import { root } from "#/configs/env";
 
 const envLoader = async (): Promise<void> => {
+    const { terminal } = await import("#/utils/terminal");
     const env: string = process.env.NODE_ENV || "development";
     const envFiles: string[] = [
         ".env",
@@ -16,7 +16,8 @@ const envLoader = async (): Promise<void> => {
     ];
 
     for (const envFile of envFiles) {
-        const fullPath = path.resolve(cwd, envFile);
+        const fullPath: string = path.join(root, envFile);
+
         if (await fse.exists(fullPath)) {
             dotenv.config({ override: true, path: fullPath });
             terminal.info(`Env loaded from ${envFile}`);
@@ -24,4 +25,4 @@ const envLoader = async (): Promise<void> => {
     }
 };
 
-export default envLoader;
+export { envLoader };
