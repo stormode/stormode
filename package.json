@@ -1,30 +1,37 @@
 {
-	"private": true,
-	"workspaces": [
-		"packages/*"
-	],
-	"scripts": {
-		"format": "npm-run-all --sequential format-tml format-pkg format-cli",
-		"format-tml": "npm-run-all --sequential format-tml:eslint format-tml:prettier",
-		"format-tml:eslint": "eslint packages/stormode-terminal/src/ --fix --ext .ts",
-		"format-tml:prettier": "prettier --write packages/stormode-terminal/src/ --ignore-unknown",
-		"format-pkg": "npm-run-all --sequential format-pkg:eslint format-pkg:prettier",
-		"format-pkg:eslint": "eslint packages/stormode/src/ --fix --ext .ts",
-		"format-pkg:prettier": "prettier --write packages/stormode/src/ --ignore-unknown",
-		"format-cli": "npm-run-all --sequential format-cli:eslint format-cli:prettier",
-		"format-cli:eslint": "eslint packages/create-stormode/src/ --fix --ext .ts",
-		"format-cli:prettier": "prettier --write packages/create-stormode/src/ --write packages/create-stormode/templates/ --ignore-unknown",
-		"build": "npm-run-all --sequential build-tml build-pkg build-cli",
-		"build-tml": "tsc -p packages/stormode-terminal/tsconfig.json",
-		"build-pkg": "tsc -p packages/stormode/tsconfig.json",
-		"build-cli": "tsc -p packages/create-stormode/tsconfig.json"
-	},
-	"devDependencies": {
-		"@typescript-eslint/eslint-plugin": "^6.19.0",
-		"@typescript-eslint/parser": "^6.19.0",
-		"eslint": "^8.56.0",
-		"npm-run-all": "^4.1.5",
-		"prettier": "^3.2.4",
-		"typescript": "^5.3.3"
-	}
+    "private": true,
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "format": "npm-run-all --sequential format-tml format-pkg format-cli",
+        "format-tml": "npm-run-all --sequential format-tml:eslint format-tml:prettier",
+        "format-tml:eslint": "eslint packages/stormode-terminal/src/ --fix --ext .ts",
+        "format-tml:prettier": "prettier --write packages/stormode-terminal/src/ --ignore-unknown",
+        "format-pkg": "npm-run-all --sequential format-pkg:eslint format-pkg:prettier",
+        "format-pkg:eslint": "eslint packages/stormode/src/ --fix --ext .ts",
+        "format-pkg:prettier": "prettier --write packages/stormode/src/ --ignore-unknown",
+        "format-cli": "npm-run-all --sequential format-cli:eslint format-cli:prettier",
+        "format-cli:eslint": "eslint packages/create-stormode/src/ --fix --ext .ts",
+        "format-cli:prettier": "prettier --write packages/create-stormode/src/ --write packages/create-stormode/templates/ --ignore-unknown",
+        "build": "npm-run-all --sequential build-tml build-pkg build-cli",
+        "build-tml": "cd packages/stormode-terminal && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
+        "build-pkg": "cd packages/stormode && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
+        "build-cli": "cd packages/create-stormode && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
+        "test": "npm-run-all --sequential test-tml",
+        "test-tml": "cd packages/stormode-terminal && jest"
+    },
+    "devDependencies": {
+        "@jest/globals": "^29.7.0",
+        "@typescript-eslint/eslint-plugin": "^6.19.0",
+        "@typescript-eslint/parser": "^6.19.0",
+        "eslint": "^8.56.0",
+        "jest": "^29.7.0",
+        "npm-run-all": "^4.1.5",
+        "prettier": "^3.2.4",
+        "ts-jest": "^29.1.2",
+        "ts-node": "^10.9.2",
+        "tsc-alias": "^1.8.8",
+        "typescript": "^5.3.3"
+    }
 }
