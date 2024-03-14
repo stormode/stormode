@@ -70,9 +70,9 @@ const applier = async (
         if (_args.outDir) config.outDir = _args.outDir;
         if (_args.index) config.index = _args.index;
         if (_args.platform) config.build.platform = _args.platform;
-        config.build.bundle = _args.bundle;
-        config.build.minify = _args.minify;
-        config.build.sourceMap = _args.sourceMap;
+        if (_args.bundle) config.build.bundle = _args.bundle;
+        if (_args.minify) config.build.minify = _args.minify;
+        if (_args.sourceMap) config.build.sourceMap = _args.sourceMap;
         if (_args.tsconfig) config.build.tsconfig = _args.tsconfig;
     }
 
