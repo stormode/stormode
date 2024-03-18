@@ -1,66 +1,67 @@
 /**
- * base configs
+ * Base configs
  */
 type BaseConfig = {
     /**
-     * @description terminal with time
+     * Use terminal with time
      * @default false
      */
     withTime: "utc" | "local" | boolean;
     /**
-     * @description input directory
+     * The directory of the source code
      * @default "src"
      */
     rootDir: string;
     /**
-     * @description output directory
-     * @default ".stormode"
-     */
-    outDir: string;
-    /**
-     * @description index file
+     * The index file of the source code
      * @default "index.ts" | "index.js"
      */
     index: string;
     /**
-     * @description tsconfig.json path
+     * The directory of the output
+     * @default "dist"
+     */
+    outDir: string;
+    /**
+     * The path of `tsconfig.json`
      * @default "tsconfig.json"
      */
     tsconfig: string;
 };
 
 /**
- * server configs
+ * Server configs
  */
 type ServerConfig = {
     /**
-     * @description directories / files to monitor other than rootDir
+     * Directories to monitor other than rootDir
      * @default []
      */
     watch: string[];
     /**
-     * @description files to ignore based on watch
+     * Directories to ignore based on watch
      * @default []
      */
     ignore: string[];
 };
 
 /**
- * build configs
+ * Build configs
  */
 type BuildConfig = {
     /**
-     * @description platform
+     * Target platform to build
+     * @see https://esbuild.github.io/api/#platform
      * @default "node"
      */
     platform: "node" | "browser";
     /**
-     * @description bundle code
+     * Bundle all the files into one
      * @default false
      */
     bundle: boolean;
     /**
-     * @description minify code
+     * Minify the code
      * @default false
      */
     minify: boolean;
@@ -70,13 +71,13 @@ type BuildConfig = {
      */
     sourcemap: boolean;
     /**
-     * @description generate sourcemap on build
+     * Generate source map on build
      * @default false
      */
     sourceMap: boolean;
     /**
-     * @description tsconfig.json path with higer priority
-     * @default "tsconfig.json"
+     * @deprecated
+     * @use tsconfig from base config
      */
     tsconfig: string;
 };

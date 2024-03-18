@@ -15,11 +15,11 @@ type BuildArgsBase = {
     rootDir: string;
     outDir: string;
     index: string;
+    tsconfig: string;
     platform: "node" | "browser";
     bundle: boolean;
     minify: boolean;
     sourceMap: boolean;
-    tsconfig: string;
 };
 
 type PreviewArgsBase = {

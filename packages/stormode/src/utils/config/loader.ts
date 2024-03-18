@@ -72,11 +72,11 @@ const applier = async (
         if (_args.rootDir) config.rootDir = _args.rootDir;
         if (_args.outDir) config.outDir = _args.outDir;
         if (_args.index) config.index = _args.index;
+        if (_args.tsconfig) config.tsconfig = _args.tsconfig;
         if (_args.platform) config.build.platform = _args.platform;
         if (_args.bundle) config.build.bundle = _args.bundle;
         if (_args.minify) config.build.minify = _args.minify;
         if (_args.sourceMap) config.build.sourceMap = _args.sourceMap;
-        if (_args.tsconfig) config.build.tsconfig = _args.tsconfig;
     }
 
     // preview
@@ -113,6 +113,7 @@ const applier = async (
             minify: config.build?.minify ?? false,
             sourcemap: config.build?.sourceMap ?? false,
             sourceMap: config.build?.sourceMap ?? false,
+            /** @deprecated */
             tsconfig: config.build?.tsconfig ?? "tsconfig.json",
         },
     };

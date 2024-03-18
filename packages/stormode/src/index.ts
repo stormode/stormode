@@ -50,7 +50,7 @@ import { preview } from "#/commands/preview";
             .option("--rootdir, --rootDir <directory>", "input directory")
             .option("--outdir, --outDir <directory>", "output directory")
             .option("--index <file>", "index file name")
-            .option("--tsconfig <directory + file>", "tsconfig.json path")
+            .option("--tsconfig <path>", "tsconfig.json path")
             .action(async (_args: DevArgs): Promise<void> => {
                 mode = "dev";
                 args = _args;
@@ -72,11 +72,11 @@ import { preview } from "#/commands/preview";
             .option("--rootdir, --rootDir <directory>", "input directory")
             .option("--outdir, --outDir <directory>", "output directory")
             .option("--index <file>", "index file name")
+            .option("--tsconfig <path>", "tsconfig.json path")
             .option("--platform <node | browser>", "platform")
             .option("--bundle", "bundle code")
             .option("--minify", "minify code")
             .option("--map, --sourcemap, --sourceMap", "generate sourcemap")
-            .option("--tsconfig <path>", "tsconfig.json path")
             .action(async (_args: BuildArgs): Promise<void> => {
                 mode = "build";
                 args = _args;
