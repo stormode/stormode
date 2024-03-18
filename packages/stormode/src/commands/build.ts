@@ -24,6 +24,8 @@ const build = async (config: ImpartialConfig): Promise<void> => {
     // clear directory
     await fse.emptyDir(outPath);
 
+    const start: Date = new Date();
+
     // transpile
     if (isTs) {
         terminal.wait("Transpiling...");
@@ -38,6 +40,7 @@ const build = async (config: ImpartialConfig): Promise<void> => {
     // bundle / build
     if (config.build.bundle) {
         terminal.wait("Bundling...");
+
         await bundler({
             config,
             inDir: outPath,
@@ -45,6 +48,7 @@ const build = async (config: ImpartialConfig): Promise<void> => {
         });
     } else {
         terminal.wait("Building...");
+
         await dirBuilder({
             config,
             inDir: outPath,
@@ -52,12 +56,10 @@ const build = async (config: ImpartialConfig): Promise<void> => {
         });
     }
 
+    const end: Date = new Date();
+
     // done
-    if (config.build.bundle) {
-        terminal.ready("Bundle completed.");
-    } else {
-        terminal.ready("Build completed.");
-    }
+    terminal.ready(`Completed in ${end.getTime() - start.getTime()}ms`);
 };
 
 export { build };

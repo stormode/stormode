@@ -1,12 +1,14 @@
 import type { Mode } from "#/@types/mode";
 import type { BuildArgs, DevArgs, PreviewArgs } from "#/@types/args";
 import type { ImpartialConfig, Config } from "#/@types/config";
+import type { packageJson } from "#/utils/package/config";
 
 import * as fse from "fs-extra";
 import { Command } from "commander";
 
 import { cache } from "#/configs/env";
 
+import { packageJsonLoader } from "#/utils/package/config";
 import { configLoader } from "#/utils/config/loader";
 import { envLoader } from "#/utils/env/loader";
 
@@ -22,11 +24,17 @@ import { preview } from "#/commands/preview";
         let mode: Mode = "dev";
         let args: Partial<DevArgs | BuildArgs | PreviewArgs> = {};
 
+        const pkj: packageJson | null = await packageJsonLoader();
+
         // info
         program
             .name("stormode")
             .description("Stormode, A Build Tool for Node")
-            .version("v0.4.0", "-v, --version", "get stormode version");
+            .version(
+                `v${pkj ? pkj.name : "0.0.0"}`,
+                "-v, --version",
+                "get stormode version",
+            );
 
         // dev
         program

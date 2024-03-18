@@ -47,7 +47,10 @@ const bundler = async (options: BundleOptions): Promise<void> => {
 
     // inject NODE_ENV
     const outIndex: string = path.join(outDir, getTranspiledName(config.index));
-    await injectEnv(outIndex);
+    await injectEnv({
+        config,
+        path: outIndex,
+    });
 };
 
 export { bundler };

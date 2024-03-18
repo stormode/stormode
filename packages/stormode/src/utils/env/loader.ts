@@ -20,7 +20,7 @@ const envLoader = async (): Promise<void> => {
 
         if (await fse.exists(fullPath)) {
             dotenv.config({ override: true, path: fullPath });
-            terminal.info(`Env loaded from ${envFile}`);
+            terminal.info(`Environment loaded from ${envFile}`);
         }
     }
 };

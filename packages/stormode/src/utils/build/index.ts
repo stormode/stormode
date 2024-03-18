@@ -80,7 +80,10 @@ const dirBuilder = async (options: BuildOptions): Promise<void> => {
 
     // inject NODE_ENV
     const outIndex: string = path.join(outDir, getTranspiledName(config.index));
-    await injectEnv(outIndex);
+    await injectEnv({
+        config,
+        path: outIndex,
+    });
 };
 
 export { dirBuilder };
