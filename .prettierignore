@@ -1,9 +1,22 @@
-.git
-.github
-.next
-.vscode
-dist
-node_modules
+# Base
+.git/
+.github/
+
+# Caches
+__MACOSX/
+.DS_Store
+
+# Settings
+.vscode/
+
+# Builds
+.next/
+/dist/
+
+# Modules
+node_modules/
+
+# Logs
 *.log
 pnpm-debug.log*
 pnpm-lock.yaml
