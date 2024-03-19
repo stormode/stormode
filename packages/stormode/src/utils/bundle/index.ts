@@ -17,12 +17,18 @@ type BundleOptions = {
     outDir: string;
 };
 
-const bundler = async (options: BundleOptions): Promise<void> => {
+type EsbuildOptions = {
+    config: ImpartialConfig;
+    inDir: string;
+    outDir: string;
+};
+
+const bundleProcess = async (options: EsbuildOptions) => {
     // declarations
     const { config, inDir, outDir } = options;
+
     const index: string = getTranspiledName(config.index);
 
-    // bundle
     await esbuild({
         allowOverwrite: true,
         define: await envGetter(),
@@ -44,6 +50,18 @@ const bundler = async (options: BundleOptions): Promise<void> => {
                 await fse.rm(path.join(outDir, file), { recursive: true });
         }),
     );
+};
+
+const bundle = async (options: BundleOptions): Promise<void> => {
+    // declarations
+    const { config, inDir, outDir } = options;
+
+    // bundle
+    await bundleProcess({
+        config,
+        inDir,
+        outDir,
+    });
 
     // inject NODE_ENV
     const outIndex: string = path.join(outDir, getTranspiledName(config.index));
@@ -53,4 +71,4 @@ const bundler = async (options: BundleOptions): Promise<void> => {
     });
 };
 
-export { bundler };
+export { bundle };

@@ -50,7 +50,7 @@ const rebuild = async (options: RebuildOnChangeOptions): Promise<void> => {
     }
 };
 
-const dev = async (config: ImpartialConfig): Promise<void> => {
+const runDev = async (config: ImpartialConfig): Promise<void> => {
     // declarations
     const { terminal } = await import("#/utils/terminal");
 
@@ -130,4 +130,4 @@ const dev = async (config: ImpartialConfig): Promise<void> => {
     });
 };
 
-export { dev };
+export { runDev };

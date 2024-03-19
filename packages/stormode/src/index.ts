@@ -12,9 +12,9 @@ import { packageJsonLoader } from "#/utils/package/config";
 import { configLoader } from "#/utils/config/loader";
 import { envLoader } from "#/utils/env/loader";
 
-import { dev } from "#/commands/dev";
-import { build } from "#/commands/build";
-import { preview } from "#/commands/preview";
+import { runDev } from "#/commands/dev";
+import { runBuild } from "#/commands/build";
+import { runPreview } from "#/commands/preview";
 
 (async (): Promise<void> => {
     try {
@@ -116,7 +116,7 @@ import { preview } from "#/commands/preview";
         // preview
         // @ts-expect-error program will change the mode
         if (mode === "preview") {
-            return await preview(config);
+            return await runPreview(config);
         }
 
         // load env
@@ -125,11 +125,11 @@ import { preview } from "#/commands/preview";
         switch (mode) {
             // dev
             case "dev":
-                return await dev(config);
+                return await runDev(config);
             // build
             // @ts-expect-error program will change the mode
             case "build":
-                return await build(config);
+                return await runBuild(config);
             default:
                 throw new Error("Invalid command");
         }

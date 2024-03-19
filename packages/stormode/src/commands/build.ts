@@ -10,10 +10,10 @@ import { tsExtensions } from "#/configs/extension";
 import { endsWithList } from "#/functions/endsWithList";
 
 import { transpileDir } from "#/utils/transpile/dir";
-import { bundler } from "#/utils/bundle";
-import { dirBuilder } from "#/utils/build";
+import { bundle } from "#/utils/bundle";
+import { build } from "#/utils/build";
 
-const build = async (config: ImpartialConfig): Promise<void> => {
+const runBuild = async (config: ImpartialConfig): Promise<void> => {
     // declarations
     const { terminal } = await import("#/utils/terminal");
     const isTs: boolean = endsWithList(config.index, tsExtensions);
@@ -43,7 +43,7 @@ const build = async (config: ImpartialConfig): Promise<void> => {
     if (config.build.bundle) {
         terminal.wait("Bundling...");
 
-        await bundler({
+        await bundle({
             config,
             inDir: inDirBuild,
             outDir,
@@ -51,7 +51,7 @@ const build = async (config: ImpartialConfig): Promise<void> => {
     } else {
         terminal.wait("Building...");
 
-        await dirBuilder({
+        await build({
             config,
             inDir: inDirBuild,
             outDir,
@@ -64,4 +64,4 @@ const build = async (config: ImpartialConfig): Promise<void> => {
     terminal.ready(`Completed in ${end.getTime() - start.getTime()}ms`);
 };
 
-export { build };
+export { runBuild };

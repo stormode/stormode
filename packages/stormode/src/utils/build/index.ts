@@ -25,7 +25,7 @@ type UseBuildOptions = {
     outDir: string;
 };
 
-const useBuilder = async (options: UseBuildOptions): Promise<void> => {
+const buildProcess = async (options: UseBuildOptions): Promise<void> => {
     // declarations
     const { config, inDir, outDir } = options;
 
@@ -42,7 +42,7 @@ const useBuilder = async (options: UseBuildOptions): Promise<void> => {
 
             // directory
             if (_stats.isDirectory()) {
-                await useBuilder({
+                await buildProcess({
                     config,
                     inDir: _inPath,
                     outDir: _outPath,
@@ -67,12 +67,12 @@ const useBuilder = async (options: UseBuildOptions): Promise<void> => {
     );
 };
 
-const dirBuilder = async (options: BuildOptions): Promise<void> => {
+const build = async (options: BuildOptions): Promise<void> => {
     // declarations
     const { config, inDir, outDir } = options;
 
     // build
-    await useBuilder({
+    await buildProcess({
         config,
         inDir,
         outDir,
@@ -86,4 +86,4 @@ const dirBuilder = async (options: BuildOptions): Promise<void> => {
     });
 };
 
-export { dirBuilder };
+export { build };
