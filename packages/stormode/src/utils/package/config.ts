@@ -1,6 +1,6 @@
 import * as path from "node:path";
 
-import * as fse from "fs-extra";
+import { readJSON } from "#/functions/readJSON";
 
 type packageJson = {
     name: string;
@@ -18,13 +18,7 @@ const packageJsonLoader = async (): Promise<packageJson | null> => {
         "package.json",
     );
 
-    if (await fse.exists(_path)) {
-        const packageJson: packageJson = await fse.readJSON(_path);
-
-        return packageJson;
-    } else {
-        return null;
-    }
+    return await readJSON<packageJson>(_path);
 };
 
 export type { packageJson };

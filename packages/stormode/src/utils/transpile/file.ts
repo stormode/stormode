@@ -39,8 +39,9 @@ const transpileFile = async (options: BuildFileOptions): Promise<void> => {
     const rootContent: string = await fse.readFile(inPath, "utf-8");
 
     // use tsconfig.json config
-    const tsConfig: TranspileOptions | null =
-        await tsConfigLoader(tsConfigPath);
+    const tsConfig: TranspileOptions | null = await tsConfigLoader({
+        path: tsConfigPath,
+    });
 
     const transpileCompileOptions: CompilerOptions = {
         ...(tsConfig?.compilerOptions ? tsConfig?.compilerOptions : {}),

@@ -18,10 +18,14 @@ const envLoader = async (): Promise<void> => {
     for (const envFile of envFiles) {
         const fullPath: string = path.join(root, envFile);
 
-        if (await fse.exists(fullPath)) {
-            dotenv.config({ override: true, path: fullPath });
-            terminal.info(`Environment loaded from ${envFile}`);
-        }
+        if (!(await fse.exists(fullPath))) continue;
+
+        dotenv.config({
+            override: true,
+            path: fullPath,
+        });
+
+        terminal.info(`Environment loaded from ${envFile}`);
     }
 };
 

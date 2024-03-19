@@ -84,6 +84,9 @@ importers:
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0
+      jsonc-parser:
+        specifier: ^3.2.1
+        version: 3.2.1
       stormode-terminal:
         specifier: workspace:^
         version: link:../stormode-terminal
@@ -3274,6 +3277,10 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
     dev: true
+
+  /jsonc-parser@3.2.1:
+    resolution: {integrity: sha512-AilxAyFOAcK5wA1+LeaySVBrHsGQvUFCDWXKpZjzaL0PqW+xfBOttn8GNtWKFWqneyMZj41MWF9Kl6iPWLwgOA==}
+    dev: false
 
   /jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
