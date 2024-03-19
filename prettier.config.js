@@ -15,6 +15,6 @@ module.exports = {
     insertPragma: false,
     htmlWhitespaceSensitivity: "ignore",
     vueIndentScriptAndStyle: true,
-    endOfLine: "lf",
+    endOfLine: "auto",
     embeddedLanguageFormatting: "auto",
 };
