@@ -18,11 +18,11 @@ const build = async (config: ImpartialConfig): Promise<void> => {
     const { terminal } = await import("#/utils/terminal");
     const isTs: boolean = endsWithList(config.index, tsExtensions);
 
-    const inPath: string = path.join(root, config.rootDir);
-    const outPath: string = path.join(root, config.outDir);
+    const inDir: string = path.join(root, config.rootDir);
+    const outDir: string = path.join(root, config.outDir);
 
     // clear directory
-    await fse.emptyDir(outPath);
+    await fse.emptyDir(outDir);
 
     const start: Date = new Date();
 
@@ -32,10 +32,12 @@ const build = async (config: ImpartialConfig): Promise<void> => {
 
         await transpileDir({
             config,
-            inDir: inPath,
-            outDir: outPath,
+            inDir,
+            outDir,
         });
     }
+
+    const inDirBuild: string = isTs ? outDir : inDir;
 
     // bundle / build
     if (config.build.bundle) {
@@ -43,16 +45,16 @@ const build = async (config: ImpartialConfig): Promise<void> => {
 
         await bundler({
             config,
-            inDir: outPath,
-            outDir: outPath,
+            inDir: inDirBuild,
+            outDir,
         });
     } else {
         terminal.wait("Building...");
 
         await dirBuilder({
             config,
-            inDir: outPath,
-            outDir: outPath,
+            inDir: inDirBuild,
+            outDir,
         });
     }
 

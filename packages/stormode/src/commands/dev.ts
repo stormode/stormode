@@ -53,11 +53,17 @@ const rebuild = async (options: RebuildOnChangeOptions): Promise<void> => {
 const dev = async (config: ImpartialConfig): Promise<void> => {
     // declarations
     const { terminal } = await import("#/utils/terminal");
+
     const isTs: boolean = endsWithList(config.index, tsExtensions);
+
     const inDir: string = path.join(root, config.rootDir);
+
     const outDir: string = path.join(cache, "build");
     const outFile: string = getTranspiledName(config.index);
-    const outPath: string = path.join(outDir, outFile);
+
+    const outPath: string = isTs
+        ? path.join(outDir, outFile)
+        : path.join(inDir, outFile);
 
     // watcher
     const watch: string[] = [

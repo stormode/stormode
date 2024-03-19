@@ -8,10 +8,13 @@ const getTranspiledName = (pathOrFile: string): string => {
 
     switch (ext) {
         case "ts":
+        case "js":
             return name + ".js";
         case "mts":
+        case "mjs":
             return name + ".mjs";
         case "cts":
+        case "cjs":
             return name + ".cjs";
         default:
             return name + ".js";
