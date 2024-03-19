@@ -1,7 +1,7 @@
-import type { envs } from "#/@types/env";
+import type { Envs } from "#/@types/env";
 
-const envGetter = async (): Promise<envs> => {
-    const envs: envs = {};
+const envGetter = async (): Promise<Envs> => {
+    const envs: Envs = {};
 
     // put envs
     for (const p in process.env) {

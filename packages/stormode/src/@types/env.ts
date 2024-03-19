@@ -1,3 +1,3 @@
-type envs = { [key: string]: string };
+type Envs = { [key: string]: string };
 
-export type { envs };
+export type { Envs };
