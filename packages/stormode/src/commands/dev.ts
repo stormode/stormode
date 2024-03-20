@@ -17,9 +17,7 @@ import { getTranspiledName } from "#/functions/getTranspiledName";
 
 type RebuildOnChangeOptions = {
     config: ImpartialConfig;
-    inRoot: string;
     inDir: string;
-    outRoot: string;
     outDir: string;
     file: string;
 };
@@ -31,16 +29,14 @@ const isInside = (basePath: string, targetPath: string): boolean => {
 
 // rebuild on change
 const rebuild = async (options: RebuildOnChangeOptions): Promise<void> => {
-    const { config, inRoot, outRoot, inDir, outDir, file } = options;
+    const { config, inDir, outDir, file } = options;
     const isTs: boolean = endsWithList(file, tsExtensions);
 
     // transpile
     if (isTs) {
         await transpileFile({
             config,
-            inPathRoot: inRoot,
             inPath: path.join(inDir, file),
-            outPathRoot: outRoot,
             outPath: path.join(outDir, getTranspiledName(file)),
         });
     }
@@ -54,16 +50,12 @@ const runDev = async (config: ImpartialConfig): Promise<void> => {
     // declarations
     const { terminal } = await import("#/utils/terminal");
 
-    const isTs: boolean = endsWithList(config.index, tsExtensions);
-
     const inDir: string = path.join(root, config.rootDir);
 
     const outDir: string = path.join(cache, "build");
     const outFile: string = getTranspiledName(config.index);
 
-    const outPath: string = isTs
-        ? path.join(outDir, outFile)
-        : path.join(inDir, outFile);
+    const outPath: string = path.join(outDir, outFile);
 
     // watcher
     const watch: string[] = [
@@ -84,13 +76,11 @@ const runDev = async (config: ImpartialConfig): Promise<void> => {
     await fse.emptyDir(outDir);
 
     // transpile
-    if (isTs) {
-        await transpileDir({
-            config,
-            inDir: inDir,
-            outDir: outDir,
-        });
-    }
+    await transpileDir({
+        config,
+        inDir: inDir,
+        outDir: outDir,
+    });
 
     // run
     execute({
@@ -113,8 +103,6 @@ const runDev = async (config: ImpartialConfig): Promise<void> => {
                 // rebuild
                 await rebuild({
                     config,
-                    inRoot: inDir,
-                    outRoot: outDir,
                     inDir: path.join(inDir, _fileDir),
                     outDir: path.join(outDir, _fileDir),
                     file: _fileName,

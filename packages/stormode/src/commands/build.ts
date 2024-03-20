@@ -5,9 +5,6 @@ import * as path from "node:path";
 import * as fse from "fs-extra";
 
 import { root } from "#/configs/env";
-import { tsExtensions } from "#/configs/extension";
-
-import { endsWithList } from "#/functions/endsWithList";
 
 import { transpileDir } from "#/utils/transpile/dir";
 import { bundle } from "#/utils/bundle";
@@ -16,7 +13,6 @@ import { build } from "#/utils/build";
 const runBuild = async (config: ImpartialConfig): Promise<void> => {
     // declarations
     const { terminal } = await import("#/utils/terminal");
-    const isTs: boolean = endsWithList(config.index, tsExtensions);
 
     const inDir: string = path.join(root, config.rootDir);
     const outDir: string = path.join(root, config.outDir);
@@ -27,17 +23,11 @@ const runBuild = async (config: ImpartialConfig): Promise<void> => {
     const start: Date = new Date();
 
     // transpile
-    if (isTs) {
-        terminal.wait("Transpiling...");
-
-        await transpileDir({
-            config,
-            inDir,
-            outDir,
-        });
-    }
-
-    const inDirBuild: string = isTs ? outDir : inDir;
+    await transpileDir({
+        config,
+        inDir,
+        outDir,
+    });
 
     // bundle / build
     if (config.build.bundle) {
@@ -45,16 +35,16 @@ const runBuild = async (config: ImpartialConfig): Promise<void> => {
 
         await bundle({
             config,
-            inDir: inDirBuild,
-            outDir,
+            inDir: outDir,
+            outDir: outDir,
         });
     } else {
         terminal.wait("Building...");
 
         await build({
             config,
-            inDir: inDirBuild,
-            outDir,
+            inDir: outDir,
+            outDir: outDir,
         });
     }
 

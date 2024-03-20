@@ -28,13 +28,28 @@ type ProcessEnvFile = {
 const processEnvFiles: ProcessEnvFile[] = [];
 const processEnv: Envs = {};
 
+const isValidNumber = (str: string | undefined): boolean => {
+    const valid: RegExp = /^[0-9]+(?:_[0-9]+)*(\.[0-9]+)?$/;
+
+    // no undefined, no empty, no invalid
+    if (str === undefined || str.trim() === "" || !valid.test(str.trim())) {
+        return false;
+    }
+
+    const num: number = parseFloat(str);
+
+    return !isNaN(num);
+};
+
 // load env from process.env
 const initProcessEnv = async (): Promise<void> => {
     for (const key in process.env) {
         // check if key is valid
         const valid: boolean = /^[a-zA-Z0-9_]+$/.test(key);
         if (!valid) continue;
-        processEnv[`process.env.${key}`] = JSON.stringify(process.env[key]);
+        processEnv[`process.env.${key}`] = isValidNumber(process.env[key])
+            ? (process.env[key] as string)
+            : JSON.stringify(process.env[key]);
     }
 };
 
@@ -80,7 +95,9 @@ const loadProcessEnv = async (): Promise<void> => {
         result = dotenvExpand.expand(result);
 
         for (const key in result.parsed) {
-            const parsed: string = String(result.parsed[key]);
+            const parsed: string = isValidNumber(result.parsed[key])
+                ? result.parsed[key]
+                : JSON.stringify(result.parsed[key]);
 
             // for dev
             process.env[key] = parsed;

@@ -103,6 +103,7 @@ const applier = async (
         outDir: config.outDir ?? "dist",
         index: config.index ?? indexFallback,
         tsconfig: config.tsconfig ?? "tsconfig.json",
+        swc: config.swc ?? {},
         server: {
             watch: config.server?.watch ?? [],
             ignore: config.server?.ignore ?? [],

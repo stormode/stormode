@@ -309,6 +309,7 @@ const main = async (): Promise<void> => {
                         "#/*": ["./src/*"],
                     },
                     resolveJsonModule: true,
+                    noEmit: true,
                     esModuleInterop: true,
                     strict: true,
                     alwaysStrict: true,

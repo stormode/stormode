@@ -1,5 +1,16 @@
+import type { EnvConfig, JscConfig, ModuleConfig } from "@swc/core";
+
 /**
- * Base configs
+ * swc config
+ */
+type SwcConfig = {
+    env: EnvConfig;
+    jsc: JscConfig;
+    module: ModuleConfig;
+};
+
+/**
+ * Base config
  */
 type BaseConfig = {
     /**
@@ -27,10 +38,16 @@ type BaseConfig = {
      * @default "tsconfig.json"
      */
     tsconfig: string;
+    /**
+     * swc config
+     * @see https://swc.rs/docs/configuration/compilation
+     * @default {}
+     */
+    swc: Partial<SwcConfig>;
 };
 
 /**
- * Server configs
+ * Server config
  */
 type ServerConfig = {
     /**
@@ -46,7 +63,7 @@ type ServerConfig = {
 };
 
 /**
- * Build configs
+ * Build config
  */
 type BuildConfig = {
     /**
