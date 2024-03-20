@@ -19,13 +19,9 @@ type BuildOptions = {
     outDir: string;
 };
 
-type UseBuildOptions = {
-    config: ImpartialConfig;
-    inDir: string;
-    outDir: string;
-};
+type BuildProcessOptions = BuildOptions;
 
-const buildProcess = async (options: UseBuildOptions): Promise<void> => {
+const buildProcess = async (options: BuildProcessOptions): Promise<void> => {
     // declarations
     const { config, inDir, outDir } = options;
 

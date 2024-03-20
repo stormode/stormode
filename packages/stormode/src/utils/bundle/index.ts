@@ -17,13 +17,9 @@ type BundleOptions = {
     outDir: string;
 };
 
-type EsbuildOptions = {
-    config: ImpartialConfig;
-    inDir: string;
-    outDir: string;
-};
+type BundleProcessOptions = BundleOptions;
 
-const bundleProcess = async (options: EsbuildOptions) => {
+const bundleProcess = async (options: BundleProcessOptions): Promise<void> => {
     // declarations
     const { config, inDir, outDir } = options;
 
