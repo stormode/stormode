@@ -10,7 +10,7 @@ import { cache } from "#/configs/env";
 
 import { packageJsonLoader } from "#/utils/package/config";
 import { configLoader } from "#/utils/config/loader";
-import { envLoader } from "#/utils/env/loader";
+import { setProcessEnv } from "#/utils/env";
 
 import { runDev } from "#/commands/dev";
 import { runBuild } from "#/commands/build";
@@ -119,8 +119,7 @@ import { runPreview } from "#/commands/preview";
             return await runPreview(config);
         }
 
-        // load env
-        await envLoader();
+        await setProcessEnv();
 
         switch (mode) {
             // dev

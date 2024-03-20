@@ -9,9 +9,9 @@ import { jsExtensions } from "#/configs/extension";
 
 import { endsWithList } from "#/functions/endsWithList";
 import { getTranspiledName } from "#/functions/getTranspiledName";
-
-import { envGetter } from "#/utils/env/getter";
 import { injectEnv } from "#/functions/inject/env";
+
+import { getProcessEnv } from "#/utils/env";
 
 type BuildOptions = {
     config: ImpartialConfig;
@@ -53,7 +53,7 @@ const buildProcess = async (options: UseBuildOptions): Promise<void> => {
                 if (endsWithList(_inPath, jsExtensions)) {
                     await esbuild({
                         allowOverwrite: true,
-                        define: await envGetter(),
+                        define: await getProcessEnv(),
                         entryPoints: [_inPath],
                         outfile: _outPath,
                         bundle: false,

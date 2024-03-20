@@ -1,5 +1,5 @@
-import { envLoader } from "#/utils/env/loader";
+import { setProcessEnv } from "#/utils/env";
 
 if (process.env.NODE_ENV === "production") {
-    envLoader();
+    setProcessEnv();
 }

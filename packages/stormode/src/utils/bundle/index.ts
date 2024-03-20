@@ -7,9 +7,9 @@ import { build as esbuild } from "esbuild";
 
 import { getTranspiledName } from "#/functions/getTranspiledName";
 import { endsWithList } from "#/functions/endsWithList";
-
-import { envGetter } from "#/utils/env/getter";
 import { injectEnv } from "#/functions/inject/env";
+
+import { getProcessEnv } from "#/utils/env";
 
 type BundleOptions = {
     config: ImpartialConfig;
@@ -31,7 +31,7 @@ const bundleProcess = async (options: EsbuildOptions) => {
 
     await esbuild({
         allowOverwrite: true,
-        define: await envGetter(),
+        define: await getProcessEnv(),
         entryPoints: [inDir],
         outfile: path.join(outDir, index),
         platform: config.build.platform,
