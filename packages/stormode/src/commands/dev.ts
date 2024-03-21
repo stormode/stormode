@@ -6,14 +6,14 @@ import * as fse from "fs-extra";
 import chokidar from "chokidar";
 
 import { cache, root } from "#/configs/env";
-import { tsExtensions } from "#/configs/extension";
+import { supportedExtensions } from "#/configs/extension";
 
-import { execute } from "#/functions/execute";
 import { endsWithList } from "#/functions/endsWithList";
+import { getTranspiledName } from "#/functions/getTranspiledName";
+import { execute } from "#/functions/execute";
 
 import { transpileDir } from "#/utils/transpile/dir";
 import { transpileFile } from "#/utils/transpile/file";
-import { getTranspiledName } from "#/functions/getTranspiledName";
 
 type RebuildOnChangeOptions = {
     config: ImpartialConfig;
@@ -30,10 +30,10 @@ const isInside = (basePath: string, targetPath: string): boolean => {
 // rebuild on change
 const rebuild = async (options: RebuildOnChangeOptions): Promise<void> => {
     const { config, inDir, outDir, file } = options;
-    const isTs: boolean = endsWithList(file, tsExtensions);
+    const valid: boolean = endsWithList(file, supportedExtensions);
 
     // transpile
-    if (isTs) {
+    if (valid) {
         await transpileFile({
             config,
             inPath: path.join(inDir, file),
