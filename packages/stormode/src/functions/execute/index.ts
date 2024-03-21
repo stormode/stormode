@@ -9,6 +9,7 @@ type ExecuteOptions = {
 };
 
 const execute = async (options: ExecuteOptions): Promise<void> => {
+    // declarations
     const { terminal } = await import("#/utils/terminal");
     let progress: childProcess.ChildProcess | null = null;
 
@@ -21,13 +22,15 @@ const execute = async (options: ExecuteOptions): Promise<void> => {
         ]);
 
         progress.stdout &&
-            progress.stdout.on("data", (data): void => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            progress.stdout.on("data", (data: any): void => {
                 const output: string = data.toString().trim();
                 if (output.length > 0) console.log(output);
             });
 
         progress.stderr &&
-            progress.stderr.on("data", (data): void => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            progress.stderr.on("data", (data: any): void => {
                 const output: string = data.toString().trim();
                 if (output.length > 0) console.log(output);
                 if (options.watcher && options.onChange) {
@@ -36,8 +39,14 @@ const execute = async (options: ExecuteOptions): Promise<void> => {
                     terminal.error("Crashed, something went wrong...?");
                 }
             });
+
+        // end parent on child successful exit
+        progress.on("exit", (code: number | null): void => {
+            if (code === 0) process.exit();
+        });
     };
 
+    // on change
     options.watcher &&
         options.watcher.on("change", async (filePath): Promise<void> => {
             if (options.onChange) {
@@ -49,7 +58,13 @@ const execute = async (options: ExecuteOptions): Promise<void> => {
             }
         });
 
+    // start
     start();
+
+    // end child on parent exit
+    process.on("exit", (): void => {
+        progress?.kill();
+    });
 };
 
 export { execute };
