@@ -7,8 +7,9 @@ import { build as esbuild } from "esbuild";
 
 import { jsExtensions } from "#/configs/extension";
 
-import { endsWithList } from "#/functions/endsWithList";
 import { getTranspiledName } from "#/functions/getTranspiledName";
+import { getModuleType } from "#/functions/getModuleType";
+import { endsWithList } from "#/functions/endsWithList";
 import { injectEnv } from "#/functions/inject/env";
 
 import { getProcessEnv } from "#/utils/env";
@@ -24,6 +25,9 @@ type BuildProcessOptions = BuildOptions;
 const buildProcess = async (options: BuildProcessOptions): Promise<void> => {
     // declarations
     const { config, inDir, outDir } = options;
+
+    const format: "esm" | "cjs" =
+        (await getModuleType({ config })) === "commonjs" ? "cjs" : "esm";
 
     // read directory
     const files: string[] = await fse.readdir(inDir);
@@ -50,6 +54,7 @@ const buildProcess = async (options: BuildProcessOptions): Promise<void> => {
                     await esbuild({
                         // common options
                         sourcemap: config.build.sourceMap,
+                        format,
                         minify: config.build.minify,
                         define: await getProcessEnv(),
                         logLevel: "silent",

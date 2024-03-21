@@ -1,6 +1,6 @@
 import Koa from "koa";
 
-import router from "@/router";
+import router from "#/router";
 
 const app: Koa = new Koa();
 const port: number = Number(process.env.PORT);

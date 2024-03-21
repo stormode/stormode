@@ -10,7 +10,7 @@ import { cache } from "#/configs/env";
 
 import { stormodePackageJsonLoader } from "#/utils/package/config";
 import { configLoader } from "#/utils/config/loader";
-import { setProcessEnv } from "#/utils/env";
+import { logProcessEnv, setProcessEnv } from "#/utils/env";
 
 import { runDev } from "#/commands/dev";
 import { runBuild } from "#/commands/build";
@@ -119,7 +119,9 @@ import { runPreview } from "#/commands/preview";
             return await runPreview(config);
         }
 
+        // load env
         await setProcessEnv();
+        await logProcessEnv();
 
         switch (mode) {
             // dev

@@ -1,11 +1,11 @@
 import type {
     CompilerOptions,
     ScriptTarget,
-    ModuleKind,
     TranspileOptions,
 } from "typescript";
 import type { Options as SwcOptions, Output, JscTarget } from "@swc/core";
 import type { ImpartialConfig } from "#/@types/config";
+import type { ModuleType } from "#/functions/getModuleType";
 import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
@@ -15,6 +15,7 @@ import { transformFile } from "@swc/core";
 import { isDev, root } from "#/configs/env";
 import { tsExtensions } from "#/configs/extension";
 
+import { getModuleType } from "#/functions/getModuleType";
 import { endsWithList } from "#/functions/endsWithList";
 
 import { packageJsonLoader } from "#/utils/package/config";
@@ -25,8 +26,6 @@ type Options = {
     inPath: string;
     outPath: string;
 };
-
-type ModuleType = "es6" | "nodenext" | "commonjs" | "umd" | "amd" | "systemjs";
 
 const ESTarget = (val: keyof typeof ScriptTarget | undefined): JscTarget => {
     const _val: string = (val ?? "").toLowerCase();
@@ -46,31 +45,6 @@ const ESTarget = (val: keyof typeof ScriptTarget | undefined): JscTarget => {
             return _val;
         default:
             return "es2015";
-    }
-};
-
-const moduleType = (val: keyof typeof ModuleKind | undefined): ModuleType => {
-    const _val: string = (val ?? "").toLowerCase();
-
-    switch (_val) {
-        case "es2015":
-        case "es2020":
-        case "es2022":
-        case "esnext":
-            return "es6";
-        case "system":
-            return "systemjs";
-        case "node":
-        case "node16":
-        case "nodenext":
-            return "nodenext";
-        case "commonjs":
-        case "amd":
-        case "umd":
-            return _val;
-        // "none" | undefined
-        default:
-            return "commonjs";
     }
 };
 
@@ -98,17 +72,9 @@ const transpile = async (options: Options): Promise<void> => {
                 "ESNext",
         );
 
-    const type: ModuleType =
-        // swc
-        config.swc.module?.type ??
-        moduleType(
-            // tsconfig.json
-            (compilerOptions?.module as keyof typeof ModuleKind | undefined) ??
-                // package.json
-                (packageJson?.type?.toLowerCase() === "module"
-                    ? "ES2015"
-                    : "CommonJS"),
-        );
+    const type: ModuleType = await getModuleType({
+        config,
+    });
 
     const swcOptions: SwcOptions = {
         envName: process.env.NODE_ENV,
@@ -148,7 +114,9 @@ const transpile = async (options: Options): Promise<void> => {
         module: {
             ...config.swc.module,
             type: type,
-            ...(type !== "systemjs" && {
+            ...((type === "commonjs" ||
+                type === "es6" ||
+                type === "nodenext") && {
                 strict:
                     // @ts-expect-error - non-systemjs config
                     config.swc.module?.strict ??
@@ -176,17 +144,6 @@ const transpile = async (options: Options): Promise<void> => {
                     (packageJson?.type?.toLowerCase() === "module"
                         ? true
                         : false),
-            }),
-            ...(type === "umd" && {
-                // @ts-expect-error - umd only config
-                globals: config.swc.module?.globals,
-            }),
-            ...(type === "amd" && {
-                // @ts-expect-error - amd only config
-                moduleId: config.swc.module?.moduleId,
-            }),
-            ...(type === "systemjs" && {
-                allowTopLevelThis: config.swc.module?.allowTopLevelThis,
             }),
         },
         sourceMaps: isDev() ? true : config.build.sourceMap,

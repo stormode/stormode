@@ -6,6 +6,7 @@ import * as fse from "fs-extra";
 import { build as esbuild } from "esbuild";
 
 import { getTranspiledName } from "#/functions/getTranspiledName";
+import { getModuleType } from "#/functions/getModuleType";
 import { endsWithList } from "#/functions/endsWithList";
 import { injectEnv } from "#/functions/inject/env";
 
@@ -25,9 +26,13 @@ const bundleProcess = async (options: BundleProcessOptions): Promise<void> => {
 
     const index: string = getTranspiledName(config.index);
 
+    const format: "esm" | "cjs" =
+        (await getModuleType({ config })) === "commonjs" ? "cjs" : "esm";
+
     await esbuild({
         // common options
         sourcemap: config.build.sourceMap,
+        format,
         platform: config.build.platform,
         minify: config.build.minify,
         define: await getProcessEnv(),
@@ -44,7 +49,7 @@ const bundleProcess = async (options: BundleProcessOptions): Promise<void> => {
 
     await Promise.all(
         files.map(async (file: string): Promise<void> => {
-            if (!endsWithList(file, [index, `${index}.map`]))
+            if (!endsWithList(file, [index, `${index}.map`, "package.json"]))
                 await fse.rm(path.join(outDir, file), { recursive: true });
         }),
     );

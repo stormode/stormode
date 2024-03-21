@@ -96,8 +96,6 @@ const loadProcessEnvFiles = async (): Promise<void> => {
 
 // load env from env files
 const loadProcessEnv = async (): Promise<void> => {
-    const { terminal } = await import("#/utils/terminal");
-
     // get content
     for (const { name, content } of processEnvFiles) {
         let result: dotenv.DotenvConfigOutput = {};
@@ -116,7 +114,13 @@ const loadProcessEnv = async (): Promise<void> => {
             // for build and bundle
             processEnv[`process.env.${key}`] = parsed;
         }
+    }
+};
 
+const logProcessEnv = async (): Promise<void> => {
+    const { terminal } = await import("#/utils/terminal");
+
+    for (const { name } of processEnvFiles) {
         terminal.info(`Environment loaded from ${name}`);
     }
 };
@@ -136,4 +140,4 @@ const getProcessEnv = async (): Promise<Envs> => {
     return processEnv;
 };
 
-export { setProcessEnv, getProcessEnv };
+export { setProcessEnv, getProcessEnv, logProcessEnv };

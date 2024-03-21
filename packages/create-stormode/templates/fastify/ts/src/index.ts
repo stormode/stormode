@@ -2,7 +2,7 @@ import type { FastifyInstance } from "fastify";
 
 import Fastify from "fastify";
 
-import useRouter from "./router";
+import useRouter from "#/router";
 
 const isDev: boolean = process.env.NODE_ENV === "development";
 

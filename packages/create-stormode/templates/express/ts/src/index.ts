@@ -4,7 +4,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-import useRouter from "@/router";
+import useRouter from "#/router";
 
 const app: Application = express();
 const port: number = Number(process.env.PORT);

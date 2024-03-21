@@ -301,21 +301,23 @@ const main = async (): Promise<void> => {
         if (isTs) {
             const tsconfigJson = {
                 compilerOptions: {
-                    target: isKoa ? "ES6" : "ES5",
+                    target: "ES2022",
+                    useDefineForClassFields: true,
                     module: "CommonJS",
-                    moduleResolution: "Node",
+                    moduleResolution: "Node10",
                     baseUrl: ".",
                     paths: {
                         "#/*": ["./src/*"],
                     },
                     resolveJsonModule: true,
                     noEmit: true,
+                    isolatedModules: true,
                     esModuleInterop: true,
                     strict: true,
                     alwaysStrict: true,
                     skipLibCheck: true,
                 },
-                include: ["src"],
+                include: ["src/**/*"],
             };
 
             const tsconfigJsonData: string = JSON.stringify(
