@@ -1,19 +1,27 @@
-import type { CompilerOptions, ScriptTarget, ModuleKind } from "typescript";
-import type { Output, JscTarget } from "@swc/core";
+import type {
+    CompilerOptions,
+    ScriptTarget,
+    ModuleKind,
+    TranspileOptions,
+} from "typescript";
+import type { Options as SwcOptions, Output, JscTarget } from "@swc/core";
 import type { ImpartialConfig } from "#/@types/config";
+import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
 import * as fse from "fs-extra";
 import { transformFile } from "@swc/core";
 
-import { isDev } from "#/configs/env";
+import { isDev, root } from "#/configs/env";
 import { tsExtensions } from "#/configs/extension";
 
 import { endsWithList } from "#/functions/endsWithList";
 
+import { packageJsonLoader } from "#/utils/package/config";
+import { tsConfigLoader } from "#/utils/typescript/config";
+
 type Options = {
     config: ImpartialConfig;
-    compilerOptions: CompilerOptions | undefined;
     inPath: string;
     outPath: string;
 };
@@ -67,33 +75,60 @@ const moduleType = (val: keyof typeof ModuleKind | undefined): ModuleType => {
 };
 
 const transpile = async (options: Options): Promise<void> => {
-    const _o: Options = options;
+    const { config, inPath, outPath }: Options = options;
 
-    const _isTs: boolean = endsWithList(_o.config.index, tsExtensions);
+    const packageJson: PackageJson | null = await packageJsonLoader();
+    const tsconfigJson: TranspileOptions | null = await tsConfigLoader({
+        path: path.join(root, config.tsconfig),
+    });
 
-    const _target: JscTarget = ESTarget(
-        _o.compilerOptions?.target as keyof typeof ScriptTarget | undefined,
-    );
+    const isTs: boolean = endsWithList(config.index, tsExtensions);
+    const compilerOptions: CompilerOptions | undefined =
+        tsconfigJson?.compilerOptions;
 
-    const _type: ModuleType = moduleType(
-        _o.compilerOptions?.module as keyof typeof ModuleKind | undefined,
-    );
+    const target: JscTarget =
+        // swc
+        config.swc.jsc?.target ??
+        ESTarget(
+            // tsconfig.json
+            (compilerOptions?.target as
+                | keyof typeof ScriptTarget
+                | undefined) ??
+                // default
+                "ESNext",
+        );
 
-    const _result: Output = await transformFile(_o.inPath, {
+    const type: ModuleType =
+        // swc
+        config.swc.module?.type ??
+        moduleType(
+            // tsconfig.json
+            (compilerOptions?.module as keyof typeof ModuleKind | undefined) ??
+                // package.json
+                (packageJson?.type?.toLowerCase() === "module"
+                    ? "ES2015"
+                    : "CommonJS"),
+        );
+
+    const swcOptions: SwcOptions = {
         envName: process.env.NODE_ENV,
         configFile: false,
-        env: _o.config.swc.env,
+        env: config.swc.env,
         jsc: {
-            target: _target,
+            target: target,
             keepClassNames: true,
-            baseUrl: _o.compilerOptions?.baseUrl ?? ".",
-            paths: _o.compilerOptions?.paths ?? {},
+            baseUrl: compilerOptions?.baseUrl ?? ".",
+            paths: compilerOptions?.paths ?? {},
             preserveAllComments: true,
-            ..._o.config.swc.jsc,
+            ...config.swc.jsc,
+            experimental: {
+                keepImportAttributes: true,
+                ...config.swc.jsc?.experimental,
+            },
             parser: {
-                ...(_o.config.swc.jsc?.parser
-                    ? _o.config.swc.jsc?.parser
-                    : _isTs
+                ...(config.swc.jsc?.parser
+                    ? config.swc.jsc?.parser
+                    : isTs
                       ? {
                             syntax: "typescript",
                             tsx: true,
@@ -103,49 +138,78 @@ const transpile = async (options: Options): Promise<void> => {
                       : {
                             syntax: "ecmascript",
                             jsx: true,
+                            functionBind: true,
                             decorators: true,
+                            decoratorsBeforeExport: true,
+                            importAssertions: true,
                         }),
             },
         },
         module: {
-            ..._o.config.swc.module,
-            type: _o.config.swc.module?.type ?? _type,
-            strict:
-                // @ts-expect-error - BaseMooduleConfig base on type parameter
-                _o.config.swc.module?.strict ??
-                _o.compilerOptions?.strict ??
-                false,
-            strictMode:
-                // @ts-expect-error - BaseMooduleConfig base on type parameter
-                _o.config.swc.module?.strictMode ??
-                _o.compilerOptions?.alwaysStrict ??
-                true,
-            importInterop:
-                // @ts-expect-error - BaseMooduleConfig base on type parameter
-                _o.config.swc.module?.importInterop ??
-                _o.compilerOptions?.esModuleInterop
-                    ? "swc"
-                    : "none",
+            ...config.swc.module,
+            type: type,
+            ...(type !== "systemjs" && {
+                strict:
+                    // @ts-expect-error - non-systemjs config
+                    config.swc.module?.strict ??
+                    // tsconfig.json
+                    compilerOptions?.strict ??
+                    // default
+                    false,
+                strictMode:
+                    // @ts-expect-error - non-systemjs config
+                    config.swc.module?.strictMode ??
+                    // tsconfig.json
+                    compilerOptions?.alwaysStrict ??
+                    // default
+                    true,
+                importInterop:
+                    // @ts-expect-error - non-systemjs config
+                    config.swc.module?.importInterop ??
+                    // tsconfig.json
+                    (compilerOptions?.esModuleInterop ? "swc" : "none"),
+                // esm require file extension
+                resolveFully:
+                    // @ts-expect-error - https://swc.rs/docs/configuration/modules#resolvefully
+                    config.swc.module?.resolveFully ??
+                    // package.json
+                    (packageJson?.type?.toLowerCase() === "module"
+                        ? true
+                        : false),
+            }),
+            ...(type === "umd" && {
+                // @ts-expect-error - umd only config
+                globals: config.swc.module?.globals,
+            }),
+            ...(type === "amd" && {
+                // @ts-expect-error - amd only config
+                moduleId: config.swc.module?.moduleId,
+            }),
+            ...(type === "systemjs" && {
+                allowTopLevelThis: config.swc.module?.allowTopLevelThis,
+            }),
         },
-        sourceMaps: isDev() ? true : _o.config.build.sourceMap,
+        sourceMaps: isDev() ? true : config.build.sourceMap,
         inlineSourcesContent: false,
-        outputPath: path.dirname(_o.outPath), // for source map
-    });
+        outputPath: path.dirname(outPath), // for source map
+    };
+
+    const result: Output = await transformFile(inPath, swcOptions);
 
     // write file
-    await fse.ensureFile(_o.outPath);
+    await fse.ensureFile(outPath);
     await fse.writeFile(
-        _o.outPath,
-        _result.code +
-            (_result.map
-                ? `//# sourceMappingURL=${path.basename(_o.outPath)}.map`
+        outPath,
+        result.code +
+            (result.map
+                ? `//# sourceMappingURL=${path.basename(outPath)}.map`
                 : ""),
     );
 
     // write source map
-    if (_result.map) {
-        await fse.ensureFile(_o.outPath);
-        await fse.writeFile(`${_o.outPath}.map`, _result.map.toString());
+    if (result.map) {
+        await fse.ensureFile(outPath);
+        await fse.writeFile(`${outPath}.map`, result.map.toString());
     }
 };
 

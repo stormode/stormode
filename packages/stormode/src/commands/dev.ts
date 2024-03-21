@@ -1,4 +1,5 @@
 import type { ImpartialConfig } from "#/@types/config";
+import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
 
@@ -12,6 +13,7 @@ import { endsWithList } from "#/functions/endsWithList";
 import { getTranspiledName } from "#/functions/getTranspiledName";
 import { execute } from "#/functions/execute";
 
+import { packageJsonLoader } from "#/utils/package/config";
 import { transpileDir } from "#/utils/transpile/dir";
 import { transpileFile } from "#/utils/transpile/file";
 
@@ -50,6 +52,11 @@ const runDev = async (config: ImpartialConfig): Promise<void> => {
     // declarations
     const { terminal } = await import("#/utils/terminal");
 
+    const packageJson: PackageJson | null = await packageJsonLoader();
+
+    const isModule: boolean =
+        packageJson?.type?.toLocaleLowerCase() === "module";
+
     const inDir: string = path.join(root, config.rootDir);
 
     const outDir: string = path.join(cache, "build");
@@ -75,6 +82,12 @@ const runDev = async (config: ImpartialConfig): Promise<void> => {
     // clear directory
     await fse.emptyDir(outDir);
 
+    // type
+    await fse.writeFile(
+        path.join(outDir, "package.json"),
+        JSON.stringify({ type: isModule ? "module" : "commonjs" }),
+    );
+
     // transpile
     await transpileDir({
         config,
@@ -91,21 +104,21 @@ const runDev = async (config: ImpartialConfig): Promise<void> => {
                 terminal.wait("Applying changes...");
 
                 // declarations
-                const _fileDir: string = path.relative(
+                const fileDir: string = path.relative(
                     inDir,
                     path.dirname(filePath),
                 );
-                const _fileName: string = path.basename(filePath);
+                const fileName: string = path.basename(filePath);
 
                 // check if inside root to avoid meaningless rebuild
-                if (!isInside(root, _fileDir)) return false;
+                if (!isInside(root, fileDir)) return false;
 
                 // rebuild
                 await rebuild({
                     config,
-                    inDir: path.join(inDir, _fileDir),
-                    outDir: path.join(outDir, _fileDir),
-                    file: _fileName,
+                    inDir: path.join(inDir, fileDir),
+                    outDir: path.join(outDir, fileDir),
+                    file: fileName,
                 });
 
                 return true;

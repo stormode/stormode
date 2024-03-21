@@ -11,8 +11,8 @@ const port = Number(process.env.PORT);
 useRouter(server);
 
 // listener
-server.listen({ port: port }, (err) => {
-    if (err) {
+server.listen({ port: port }, (e) => {
+    if (e) {
         console.error(e instanceof Error ? e.message : "Error");
         process.exit(1);
     }

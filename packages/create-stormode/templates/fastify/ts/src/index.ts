@@ -20,8 +20,8 @@ useRouter(server);
         await server.listen({ port: port });
         const msg = `Server running on: http://0.0.0.0:${port}`;
         console.log(`- [\x1b[38;5;10mready\x1b[0m]`, msg);
-    } catch (err: unknown) {
-        console.error(err instanceof Error ? err.message : "Error");
+    } catch (e: unknown) {
+        console.error(e instanceof Error ? e.message : "Error");
         process.exit(1);
     }
 })();

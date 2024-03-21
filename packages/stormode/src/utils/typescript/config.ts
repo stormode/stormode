@@ -9,23 +9,28 @@ type tsConfigLoaderOptions = {
     path: string;
 };
 
+type ExtendedTranspileOptions = TranspileOptions & {
+    extends?: string;
+};
+
 const tsConfigLoader = async (
     options: tsConfigLoaderOptions,
 ): Promise<TranspileOptions | null> => {
     // declarations
-    const _o: tsConfigLoaderOptions = options;
+    const o: tsConfigLoaderOptions = options;
     const tsConfig: TranspileOptions | null = await readJSON<TranspileOptions>(
-        _o.path,
+        o.path,
     );
+
+    const exTsConfig: ExtendedTranspileOptions | null =
+        tsConfig as ExtendedTranspileOptions | null;
 
     /* If the config file is extended from another file, merge them */
 
-    // @ts-expect-error - "extends" is not included in TranspileOptions
-    if (tsConfig?.extends) {
+    if (exTsConfig?.extends) {
         const extendedConfigPath: string = path.resolve(
-            path.dirname(_o.path),
-            // @ts-expect-error - "extends" is not included in TranspileOptions
-            tsConfig.extends,
+            path.dirname(o.path),
+            exTsConfig.extends,
         );
 
         const extendedConfig: TranspileOptions | null = await tsConfigLoader({

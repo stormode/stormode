@@ -1,14 +1,14 @@
 import type { Mode } from "#/@types/mode";
 import type { BuildArgs, DevArgs, PreviewArgs } from "#/@types/args";
 import type { ImpartialConfig, Config } from "#/@types/config";
-import type { packageJson } from "#/utils/package/config";
+import type { PackageJson } from "#/utils/package/config";
 
 import * as fse from "fs-extra";
 import { Command } from "commander";
 
 import { cache } from "#/configs/env";
 
-import { packageJsonLoader } from "#/utils/package/config";
+import { stormodePackageJsonLoader } from "#/utils/package/config";
 import { configLoader } from "#/utils/config/loader";
 import { setProcessEnv } from "#/utils/env";
 
@@ -24,7 +24,7 @@ import { runPreview } from "#/commands/preview";
         let mode: Mode = "dev";
         let args: Partial<DevArgs | BuildArgs | PreviewArgs> = {};
 
-        const pkj: packageJson | null = await packageJsonLoader();
+        const pkj: PackageJson | null = await stormodePackageJsonLoader();
 
         // info
         program
@@ -102,7 +102,7 @@ import { runPreview } from "#/commands/preview";
             });
 
         // parse
-        program.parse();
+        await program.parseAsync();
 
         // ensure temp folder
         await fse.ensureDir(cache);
@@ -114,7 +114,7 @@ import { runPreview } from "#/commands/preview";
         });
 
         // preview
-        // @ts-expect-error program will change the mode
+        // @ts-expect-error - program will change the mode
         if (mode === "preview") {
             return await runPreview(config);
         }
@@ -126,7 +126,7 @@ import { runPreview } from "#/commands/preview";
             case "dev":
                 return await runDev(config);
             // build
-            // @ts-expect-error program will change the mode
+            // @ts-expect-error - program will change the mode
             case "build":
                 return await runBuild(config);
             default:

@@ -26,15 +26,17 @@ const bundleProcess = async (options: BundleProcessOptions): Promise<void> => {
     const index: string = getTranspiledName(config.index);
 
     await esbuild({
-        allowOverwrite: true,
-        define: await getProcessEnv(),
-        entryPoints: [inDir],
-        outfile: path.join(outDir, index),
-        platform: config.build.platform,
-        bundle: true,
-        minify: config.build.minify,
-        logLevel: "silent",
+        // common options
         sourcemap: config.build.sourceMap,
+        platform: config.build.platform,
+        minify: config.build.minify,
+        define: await getProcessEnv(),
+        logLevel: "silent",
+        // build options
+        bundle: true,
+        outfile: path.join(outDir, index),
+        allowOverwrite: true,
+        entryPoints: [inDir],
     });
 
     // keep only index.js / index.js.map

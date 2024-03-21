@@ -31,31 +31,33 @@ const buildProcess = async (options: BuildProcessOptions): Promise<void> => {
     await Promise.all(
         files.map(async (file: string): Promise<void> => {
             // declarations
-            const _inPath: string = path.join(inDir, file);
-            const _outPath: string = path.join(outDir, file);
+            const inPath: string = path.join(inDir, file);
+            const outPath: string = path.join(outDir, file);
 
-            const _stats: fse.Stats = await fse.stat(_inPath);
+            const stats: fse.Stats = await fse.stat(inPath);
 
             // directory
-            if (_stats.isDirectory()) {
+            if (stats.isDirectory()) {
                 await buildProcess({
                     config,
-                    inDir: _inPath,
-                    outDir: _outPath,
+                    inDir: inPath,
+                    outDir: outPath,
                 });
             }
             // file
             else {
-                if (endsWithList(_inPath, jsExtensions)) {
+                if (endsWithList(inPath, jsExtensions)) {
                     await esbuild({
-                        allowOverwrite: true,
-                        define: await getProcessEnv(),
-                        entryPoints: [_inPath],
-                        outfile: _outPath,
-                        bundle: false,
-                        minify: config.build.minify,
-                        logLevel: "silent",
+                        // common options
                         sourcemap: config.build.sourceMap,
+                        minify: config.build.minify,
+                        define: await getProcessEnv(),
+                        logLevel: "silent",
+                        // build options
+                        bundle: false,
+                        outfile: outPath,
+                        allowOverwrite: true,
+                        entryPoints: [inPath],
                     });
                 }
             }

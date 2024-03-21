@@ -20,7 +20,7 @@ const readJSON = async <T = unknown>(path: string): Promise<T | null> => {
 
         // result
         return json;
-    } catch (e) {
+    } catch (e: unknown) {
         return null;
     }
 };

@@ -3,18 +3,18 @@ import type { ImpartialConfig } from "#/@types/config";
 import { writeFile, readFile } from "fs-extra";
 
 type InjectEnvOptions = {
-    path: string;
     config: ImpartialConfig;
+    path: string;
 };
 
 const injectEnv = async (options: InjectEnvOptions): Promise<void> => {
-    const _o: InjectEnvOptions = options;
+    const { config, path }: InjectEnvOptions = options;
 
     await writeFile(
-        _o.path,
+        path,
         `process.env.NODE_ENV="${process.env.NODE_ENV}";` +
-            (_o.config.build.minify ? "" : "\n") +
-            (await readFile(_o.path, "utf8")),
+            (config.build.minify ? "" : "\n") +
+            (await readFile(path, "utf8")),
     );
 };
 

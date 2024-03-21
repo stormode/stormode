@@ -2,7 +2,7 @@ import type { CompilerOptions } from "typescript";
 import type { Mode } from "#/@types/mode";
 import type { Config, ImpartialConfig } from "#/@types/config";
 import type { BuildArgs, DevArgs, PreviewArgs } from "#/@types/args";
-import type { packageJson } from "#/utils/package/config";
+import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
 
@@ -14,7 +14,7 @@ import { tsExtensions } from "#/configs/extension";
 import { endsWithList } from "#/functions/endsWithList";
 import { getTranspiledName } from "#/functions/getTranspiledName";
 
-import { packageJsonLoader } from "#/utils/package/config";
+import { stormodePackageJsonLoader } from "#/utils/package/config";
 
 type ConfigLoaderOptions = {
     mode: Mode;
@@ -207,7 +207,7 @@ const configLoader = async (
 
     // result
     const { terminal } = await import("#/utils/terminal");
-    const pkj: packageJson | null = await packageJsonLoader();
+    const pkj: PackageJson | null = await stormodePackageJsonLoader();
 
     terminal.info(`Stormode v${pkj ? pkj.version : "0.0.0"}`);
     terminal.info(`Config loaded from ${configName}`);

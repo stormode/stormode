@@ -28,15 +28,21 @@ type ProcessEnvFile = {
 const processEnvFiles: ProcessEnvFile[] = [];
 const processEnv: Envs = {};
 
-const isValidNumber = (str: string | undefined): boolean => {
+const isValidNumber = (val: string | undefined): boolean => {
     const valid: RegExp = /^[0-9]+(?:_[0-9]+)*(\.[0-9]+)?$/;
 
-    // no undefined, no empty, no invalid
-    if (str === undefined || str.trim() === "" || !valid.test(str.trim())) {
+    if (
+        // no undefined
+        val === undefined ||
+        // no empty
+        val.trim() === "" ||
+        // no invalid
+        !valid.test(val.trim())
+    ) {
         return false;
     }
 
-    const num: number = parseFloat(str);
+    const num: number = parseFloat(val);
 
     return !isNaN(num);
 };
@@ -46,7 +52,9 @@ const initProcessEnv = async (): Promise<void> => {
     for (const key in process.env) {
         // check if key is valid
         const valid: boolean = /^[a-zA-Z0-9_]+$/.test(key);
+
         if (!valid) continue;
+
         processEnv[`process.env.${key}`] = isValidNumber(process.env[key])
             ? (process.env[key] as string)
             : JSON.stringify(process.env[key]);
@@ -57,6 +65,7 @@ const initProcessEnv = async (): Promise<void> => {
 const loadProcessEnvFiles = async (): Promise<void> => {
     // declarations
     const env: string = process.env.NODE_ENV || "development";
+
     const envFiles: string[] = [
         ".env",
         ".env.local",

@@ -18,6 +18,7 @@ const execute = async (options: ExecuteOptions): Promise<void> => {
 
         progress = childProcess.spawn("node", [
             "--enable-source-maps",
+            "--no-warnings",
             options.outPath,
         ]);
 
