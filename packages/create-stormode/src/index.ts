@@ -313,6 +313,7 @@ const main = async (): Promise<void> => {
                     noEmit: true,
                     isolatedModules: true,
                     esModuleInterop: true,
+                    forceConsistentCasingInFileNames: true,
                     strict: true,
                     alwaysStrict: true,
                     skipLibCheck: true,

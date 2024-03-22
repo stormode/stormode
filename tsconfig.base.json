@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "ES5",
         "module": "CommonJS",
-        "moduleResolution": "node",
+        "moduleResolution": "Node10",
         "resolveJsonModule": true,
         "declaration": true,
         "downlevelIteration": true,
