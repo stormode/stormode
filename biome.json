@@ -24,6 +24,7 @@
     },
     "formatter": {
         "enabled": true,
+        "formatWithErrors": false,
         "indentStyle": "space",
         "indentWidth": 4,
         "lineEnding": "lf",
@@ -54,7 +55,7 @@
     },
     "json": {
         "parser": {
-            "allowComments": true,
+            "allowComments": false,
             "allowTrailingCommas": false
         },
         "formatter": {
@@ -65,5 +66,16 @@
             "lineWidth": 80,
             "trailingCommas": "none"
         }
-    }
+    },
+    "overrides": [
+        {
+            "include": ["./tsconfig.base.json", "./**/tsconfig.json"],
+            "json": {
+                "parser": {
+                    "allowComments": true,
+                    "allowTrailingCommas": true
+                }
+            }
+        }
+    ]
 }
