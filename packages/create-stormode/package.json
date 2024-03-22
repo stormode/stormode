@@ -28,11 +28,7 @@
     "bugs": "https://github.com/stormode/stormode/issues",
     "license": "MIT",
     "author": "Alpheus Tang",
-    "files": [
-        "bin",
-        "dist",
-        "templates"
-    ],
+    "files": ["bin", "dist", "templates"],
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "bin": {

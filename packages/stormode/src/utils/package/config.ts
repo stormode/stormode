@@ -1,9 +1,9 @@
 import * as path from "node:path";
 
-import { readJSON } from "#/functions/readJSON";
 import { root } from "#/configs/env";
+import { readJSON } from "#/functions/readJSON";
 
-import { set, get } from "#/utils/store";
+import { get, set } from "#/utils/store";
 
 type _PackageJson = {
     name: string;

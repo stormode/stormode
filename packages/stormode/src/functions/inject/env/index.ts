@@ -1,6 +1,6 @@
 import type { ImpartialConfig } from "#/@types/config";
 
-import { writeFile, readFile } from "fs-extra";
+import { readFile, writeFile } from "fs-extra";
 
 type InjectEnvOptions = {
     config: ImpartialConfig;
@@ -12,6 +12,7 @@ const injectEnv = async (options: InjectEnvOptions): Promise<void> => {
 
     await writeFile(
         path,
+        // biome-ignore lint: readability
         `process.env.NODE_ENV="${process.env.NODE_ENV}";` +
             (config.build.minify ? "" : "\n") +
             (await readFile(path, "utf8")),

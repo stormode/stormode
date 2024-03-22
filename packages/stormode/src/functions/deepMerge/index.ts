@@ -1,7 +1,7 @@
 const deepMerge = async <
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint: string, number, boolean, object
     Source extends Record<string, any>,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint: string, number, boolean, object
     Extend extends Record<string, any>,
 >(
     source: Source | null | undefined,

@@ -1,6 +1,6 @@
 import type { Color, ColorFunction } from "#/@types/color";
 import type { Config } from "#/@types/config";
-import type { Terminal, Logs, Log, CustomLogOptions } from "#/@types/terminal";
+import type { CustomLogOptions, Log, Logs, Terminal } from "#/@types/terminal";
 
 import { log } from "#/functions/log";
 

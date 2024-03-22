@@ -16,7 +16,7 @@ const runPreview = async (config: ImpartialConfig): Promise<void> => {
 
     // check if entry exists
     if (!(await fse.exists(outPath)))
-        throw new Error("Unable to find the entry:" + outPath);
+        throw new Error(`Unable·to·find·the·entry:${outPath}`);
 
     // execute
     execute({

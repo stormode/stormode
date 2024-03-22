@@ -2,9 +2,9 @@ import type { Envs } from "#/@types/env";
 
 import * as path from "node:path";
 
-import * as fse from "fs-extra";
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
+import * as fse from "fs-extra";
 
 import { root } from "#/configs/env";
 
@@ -42,9 +42,9 @@ const isValidNumber = (val: string | undefined): boolean => {
         return false;
     }
 
-    const num: number = parseFloat(val);
+    const num: number = Number.parseFloat(val);
 
-    return !isNaN(num);
+    return !Number.isNaN(num);
 };
 
 // load env from process.env

@@ -1,16 +1,16 @@
 import type {
+    Answers,
     Framework,
     FwChoice,
-    VrChoice,
-    Answers,
     Variant,
+    VrChoice,
 } from "./@types/question";
 
 import * as path from "node:path";
 
 import * as fse from "fs-extra";
-import prompts from "prompts";
 import fetch from "npm-registry-fetch";
+import prompts from "prompts";
 import terminal, { color } from "stormode-terminal";
 
 const cwd: string = process.cwd();
@@ -97,13 +97,12 @@ const getFramework = (): FwChoice[] => {
 
 const getVariant = (fw: Framework): VrChoice[] => {
     const choices: VrChoice[] = [];
-    fw.variants &&
-        fw.variants.map((variant: Variant): void => {
-            choices.push({
-                title: variant.color(variant.title),
-                value: variant.value,
-            });
+    fw.variants?.map((variant: Variant): void => {
+        choices.push({
+            title: variant.color(variant.title),
+            value: variant.value,
         });
+    });
     return choices;
 };
 
@@ -120,8 +119,8 @@ const lastVer = async (name: string): Promise<string> => {
         const packageUrl: string = `${registryUrl}${name}`;
 
         const response: PkgInfo = (await fetch.json(packageUrl)) as PkgInfo;
-        const latestVersion: string = response["dist-tags"]["latest"];
-        return "^" + latestVersion;
+        const latestVersion: string = response["dist-tags"].latest;
+        return `^${latestVersion}`;
     } catch (e: unknown) {
         const ermsg: string = `Failed to get the latest version of ${name}`;
         throw new Error(ermsg);
@@ -211,14 +210,14 @@ const main = async (): Promise<void> => {
         let targetDir: string = path.resolve(cwd, name);
 
         // change target project name on repeat
-        let counter: number = 2;
+        let counter = 2;
         const existmsg: string = `Folder (${name}${
-            counter > 2 ? "-" + (counter - 1).toString() : ""
+            counter > 2 ? `-${(counter - 1).toString()}` : ""
         }) already exists`;
         const existmsg2: string = `project renamed to (${name}-${counter})`;
 
         while (await fse.exists(targetDir)) {
-            targetDir = path.resolve(cwd, name + `-${counter}`);
+            targetDir = path.resolve(cwd, `${name}-${counter}`);
             terminal.info(`${existmsg}, ${existmsg2}`);
             counter++;
         }

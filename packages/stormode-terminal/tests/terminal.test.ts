@@ -1,9 +1,10 @@
-import { describe, it, expect } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 
-import terminal, { Log, Logs } from "../dist/index";
+import terminal, { type Log, type Logs } from "../dist/index";
 
 const removeColor = (val: string): string => {
     return val.replace(
+        // biome-ignore lint: remove color
         /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
         "",
     );

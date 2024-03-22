@@ -1,22 +1,22 @@
+import type { JscTarget, Output, Options as SwcOptions } from "@swc/core";
 import type {
     CompilerOptions,
     ScriptTarget,
     TranspileOptions,
 } from "typescript";
-import type { Options as SwcOptions, Output, JscTarget } from "@swc/core";
 import type { ImpartialConfig } from "#/@types/config";
 import type { ModuleType } from "#/functions/getModuleType";
 import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
-import * as fse from "fs-extra";
 import { transformFile } from "@swc/core";
+import * as fse from "fs-extra";
 
 import { isDev, root } from "#/configs/env";
 import { tsExtensions } from "#/configs/extension";
 
-import { getModuleType } from "#/functions/getModuleType";
 import { endsWithList } from "#/functions/endsWithList";
+import { getModuleType } from "#/functions/getModuleType";
 
 import { packageJsonLoader } from "#/utils/package/config";
 import { tsConfigLoader } from "#/utils/typescript/config";
@@ -96,19 +96,19 @@ const transpile = async (options: Options): Promise<void> => {
                     ? config.swc.jsc?.parser
                     : isTs
                       ? {
-                            syntax: "typescript",
-                            tsx: true,
-                            decorators: true,
-                            dynamicImport: true,
-                        }
+                              syntax: "typescript",
+                              tsx: true,
+                              decorators: true,
+                              dynamicImport: true,
+                          }
                       : {
-                            syntax: "ecmascript",
-                            jsx: true,
-                            functionBind: true,
-                            decorators: true,
-                            decoratorsBeforeExport: true,
-                            importAssertions: true,
-                        }),
+                              syntax: "ecmascript",
+                              jsx: true,
+                              functionBind: true,
+                              decorators: true,
+                              decoratorsBeforeExport: true,
+                              importAssertions: true,
+                          }),
             },
         },
         module: {

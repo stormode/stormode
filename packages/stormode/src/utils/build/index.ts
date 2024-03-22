@@ -2,14 +2,14 @@ import type { ImpartialConfig } from "#/@types/config";
 
 import * as path from "node:path";
 
-import * as fse from "fs-extra";
 import { build as esbuild } from "esbuild";
+import * as fse from "fs-extra";
 
 import { jsExtensions } from "#/configs/extension";
 
-import { getTranspiledName } from "#/functions/getTranspiledName";
-import { getModuleType } from "#/functions/getModuleType";
 import { endsWithList } from "#/functions/endsWithList";
+import { getModuleType } from "#/functions/getModuleType";
+import { getTranspiledName } from "#/functions/getTranspiledName";
 import { injectEnv } from "#/functions/inject/env";
 
 import { getProcessEnv } from "#/utils/env";

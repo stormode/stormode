@@ -23,14 +23,12 @@ const time = (config: TimeConfig): string => {
             return "";
         }
         // true
-        else {
-            type = "local";
-        }
+        type = "local";
     } else {
         type = config;
     }
 
-    return `[${getTime({ type })}]` + " ";
+    return `[${getTime({ type })}] `;
 };
 
 const log = (options: LogOptions): string => {

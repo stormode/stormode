@@ -7,10 +7,10 @@ import * as fse from "fs-extra";
 
 import { root } from "#/configs/env";
 
+import { build } from "#/utils/build";
+import { bundle } from "#/utils/bundle";
 import { packageJsonLoader } from "#/utils/package/config";
 import { transpileDir } from "#/utils/transpile/dir";
-import { bundle } from "#/utils/bundle";
-import { build } from "#/utils/build";
 
 const runBuild = async (config: ImpartialConfig): Promise<void> => {
     // declarations

@@ -15,7 +15,7 @@ type GetModuleOptions = {
     config: ImpartialConfig;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint: string
 const moduleType = (val: any): ModuleType => {
     const _val: string = (val ?? "").toLowerCase();
 

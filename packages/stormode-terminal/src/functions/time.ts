@@ -20,6 +20,7 @@ const getTime = (options: GetTimeOptions): string => {
     const milliseconds: number = now.getMilliseconds();
 
     return (
+        // biome-ignore lint: readability
         year +
         "/" +
         addZero(month, 2) +

@@ -1,19 +1,19 @@
-import type { Mode } from "#/@types/mode";
 import type { BuildArgs, DevArgs, PreviewArgs } from "#/@types/args";
 import type { ImpartialConfig } from "#/@types/config";
+import type { Mode } from "#/@types/mode";
 import type { PackageJson } from "#/utils/package/config";
 
-import * as fse from "fs-extra";
 import { Command } from "commander";
+import * as fse from "fs-extra";
 
 import { cache } from "#/configs/env";
 
-import { stormodePackageJsonLoader } from "#/utils/package/config";
 import { configLoader } from "#/utils/config/loader";
 import { logProcessEnv, setProcessEnv } from "#/utils/env";
+import { stormodePackageJsonLoader } from "#/utils/package/config";
 
-import { runDev } from "#/commands/dev";
 import { runBuild } from "#/commands/build";
+import { runDev } from "#/commands/dev";
 import { runPreview } from "#/commands/preview";
 
 (async (): Promise<void> => {

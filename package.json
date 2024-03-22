@@ -1,15 +1,9 @@
 {
     "scripts": {
         "format": "npm-run-all --sequential format-tml format-pkg format-cli",
-        "format-tml": "npm-run-all --sequential format-tml:eslint format-tml:prettier",
-        "format-tml:eslint": "eslint packages/stormode-terminal/src/ --fix --ext .ts",
-        "format-tml:prettier": "prettier --write packages/stormode-terminal/src/ --ignore-unknown",
-        "format-pkg": "npm-run-all --sequential format-pkg:eslint format-pkg:prettier",
-        "format-pkg:eslint": "eslint packages/stormode/src/ --fix --ext .ts",
-        "format-pkg:prettier": "prettier --write packages/stormode/src/ --ignore-unknown",
-        "format-cli": "npm-run-all --sequential format-cli:eslint format-cli:prettier",
-        "format-cli:eslint": "eslint packages/create-stormode/src/ --fix --ext .ts",
-        "format-cli:prettier": "prettier --write packages/create-stormode/src/ --write packages/create-stormode/templates/ --ignore-unknown",
+        "format-tml": "biome check ./packages/stormode-terminal --apply ",
+        "format-pkg": "biome check ./packages/stormode --apply ",
+        "format-cli": "biome check ./packages/create-stormode --apply ",
         "build": "npm-run-all --sequential build-tml build-pkg build-cli",
         "build-tml": "cd packages/stormode-terminal && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
         "build-pkg": "cd packages/stormode && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
@@ -18,7 +12,9 @@
         "test-tml": "cd packages/stormode-terminal && jest"
     },
     "devDependencies": {
+        "@biomejs/biome": "1.6.2",
         "@jest/globals": "^29.7.0",
+        "@types/node": "^20.11.30",
         "@typescript-eslint/eslint-plugin": "^7.3.1",
         "@typescript-eslint/parser": "^7.3.1",
         "eslint": "^8.57.0",

@@ -1,13 +1,13 @@
-import type { Options as SwcOptions, Output } from "@swc/core";
-import type { Mode } from "#/@types/mode";
-import type { Config, ImpartialConfig } from "#/@types/config";
+import type { Output, Options as SwcOptions } from "@swc/core";
 import type { BuildArgs, DevArgs, PreviewArgs } from "#/@types/args";
+import type { Config, ImpartialConfig } from "#/@types/config";
+import type { Mode } from "#/@types/mode";
 import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
 
-import * as fse from "fs-extra";
 import { transformFile } from "@swc/core";
+import * as fse from "fs-extra";
 
 import { cache, root } from "#/configs/env";
 
@@ -138,7 +138,7 @@ const configLogger = async (options?: ConfigLoggerOptions): Promise<void> => {
     if (options?.name) {
         terminal.info(`Config loaded from ${options.name}`);
     } else {
-        terminal.info(`Config loaded as default`);
+        terminal.info("Config loaded as default");
     }
 };
 
@@ -205,7 +205,7 @@ const configLoader = async (
                     ? `//# sourceMappingURL=${path.basename(targetPath)}.map`
                     : ""),
         );
-        result.map && (await fse.writeFile(targetPath + ".map", result.map));
+        result.map && (await fse.writeFile(`${targetPath}.map`, result.map));
 
         // check if exist
         if (!(await fse.exists(targetPath))) {
@@ -214,7 +214,7 @@ const configLoader = async (
     }
 
     // import
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-var-requires
+    // biome-ignore lint: module
     const configModule: any = await require(targetPath);
     if (!configModule)
         throw new Error(

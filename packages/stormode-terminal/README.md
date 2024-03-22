@@ -115,7 +115,7 @@ const ok = custom({
     title: "ok",
     config: {
         time: true,
-    }
+    },
 });
 
 ok("it's ok!");

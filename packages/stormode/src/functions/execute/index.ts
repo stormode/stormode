@@ -22,24 +22,22 @@ const execute = async (options: ExecuteOptions): Promise<void> => {
             options.outPath,
         ]);
 
-        progress.stdout &&
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            progress.stdout.on("data", (data: any): void => {
-                const output: string = data.toString().trim();
-                if (output.length > 0) console.log(output);
-            });
+        // biome-ignore lint: string, number, boolean, object
+        progress.stdout?.on("data", (data: any): void => {
+            const output: string = data.toString().trim();
+            if (output.length > 0) console.log(output);
+        });
 
-        progress.stderr &&
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            progress.stderr.on("data", (data: any): void => {
-                const output: string = data.toString().trim();
-                if (output.length > 0) console.log(output);
-                if (options.watcher && options.onChange) {
-                    terminal.error("Crashed, waiting for changes...");
-                } else {
-                    terminal.error("Crashed, something went wrong...?");
-                }
-            });
+        // biome-ignore lint: string, number, boolean, object
+        progress.stderr?.on("data", (data: any): void => {
+            const output: string = data.toString().trim();
+            if (output.length > 0) console.log(output);
+            if (options.watcher && options.onChange) {
+                terminal.error("Crashed, waiting for changes...");
+            } else {
+                terminal.error("Crashed, something went wrong...?");
+            }
+        });
 
         // end parent on child successful exit
         progress.on("exit", (code: number | null): void => {
@@ -48,16 +46,15 @@ const execute = async (options: ExecuteOptions): Promise<void> => {
     };
 
     // on change
-    options.watcher &&
-        options.watcher.on("change", async (filePath): Promise<void> => {
-            if (options.onChange) {
-                progress?.kill();
-                // only restart on successful change
-                const success: boolean = await options.onChange(filePath);
-                if (success === false) return void 0;
-                start();
-            }
-        });
+    options.watcher?.on("change", async (filePath): Promise<void> => {
+        if (options.onChange) {
+            progress?.kill();
+            // only restart on successful change
+            const success: boolean = await options.onChange(filePath);
+            if (success === false) return void 0;
+            start();
+        }
+    });
 
     // start
     start();

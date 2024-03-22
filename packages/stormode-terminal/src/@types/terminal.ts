@@ -1,5 +1,5 @@
-import { Color } from "#/@types/color";
-import { Config } from "#/@types/config";
+import type { Color } from "#/@types/color";
+import type { Config } from "#/@types/config";
 
 type Log = (content: unknown, config?: Config) => string;
 

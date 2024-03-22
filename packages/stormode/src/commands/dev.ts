@@ -3,15 +3,15 @@ import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
 
-import * as fse from "fs-extra";
 import chokidar from "chokidar";
+import * as fse from "fs-extra";
 
 import { cache, root } from "#/configs/env";
 import { supportedExtensions } from "#/configs/extension";
 
 import { endsWithList } from "#/functions/endsWithList";
-import { getTranspiledName } from "#/functions/getTranspiledName";
 import { execute } from "#/functions/execute";
+import { getTranspiledName } from "#/functions/getTranspiledName";
 
 import { packageJsonLoader } from "#/utils/package/config";
 import { transpileDir } from "#/utils/transpile/dir";
