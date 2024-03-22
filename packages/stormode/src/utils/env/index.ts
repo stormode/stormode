@@ -95,7 +95,7 @@ const loadProcessEnvFiles = async (): Promise<void> => {
 };
 
 // load env from env files
-const loadProcessEnv = async (): Promise<void> => {
+const loadProcessEnvFromFiles = async (): Promise<void> => {
     // get content
     for (const { content } of processEnvFiles) {
         let result: dotenv.DotenvConfigOutput = {};
@@ -128,7 +128,7 @@ const logProcessEnv = async (): Promise<void> => {
 const setProcessEnv = async (): Promise<void> => {
     await initProcessEnv();
     await loadProcessEnvFiles();
-    await loadProcessEnv();
+    await loadProcessEnvFromFiles();
 };
 
 const getProcessEnv = async (): Promise<Envs> => {
@@ -140,4 +140,11 @@ const getProcessEnv = async (): Promise<Envs> => {
     return processEnv;
 };
 
-export { setProcessEnv, getProcessEnv, logProcessEnv };
+const loadProcessEnv = async (): Promise<void> => {
+    if (process.env.NODE_ENV === "production") {
+        await loadProcessEnvFiles();
+        await loadProcessEnvFromFiles();
+    }
+};
+
+export { setProcessEnv, logProcessEnv, getProcessEnv, loadProcessEnv };
