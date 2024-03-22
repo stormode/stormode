@@ -1,17 +1,28 @@
-import type { Config } from "jest";
+import type { Config as SwcConfig } from "@swc/core";
+import type { Config as JestConfig } from "jest";
 
-const config: Config = {
-    verbose: true,
-    preset: "ts-jest",
-    testMatch: ["<rootDir>/tests/**/*.test.{js,ts,jsx,tsx}"],
-    transform: {
-        "^.+\\.[tj]sx?$": [
-            "ts-jest",
-            {
-                tsconfig: "<rootDir>/tsconfig.json",
+const config: SwcConfig = {
+    jsc: {
+        keepClassNames: true,
+        preserveAllComments: true,
+        transform: {
+            react: {
+                runtime: "automatic",
             },
-        ],
+        },
     },
 };
 
-export default config;
+export default {
+    rootDir: process.cwd(),
+    testMatch: ["<rootDir>/tests/**/*.test.{js,jsx,ts,tsx}"],
+    moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
+    transform: {
+        "^.+\\.[tj]sx?$": [
+            "@swc/jest",
+            {
+                ...config,
+            },
+        ],
+    },
+} as JestConfig;
