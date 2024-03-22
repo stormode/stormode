@@ -97,7 +97,7 @@ const loadProcessEnvFiles = async (): Promise<void> => {
 // load env from env files
 const loadProcessEnv = async (): Promise<void> => {
     // get content
-    for (const { name, content } of processEnvFiles) {
+    for (const { content } of processEnvFiles) {
         let result: dotenv.DotenvConfigOutput = {};
 
         result.parsed = dotenv.parse(content);

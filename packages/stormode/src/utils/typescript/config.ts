@@ -5,8 +5,11 @@ import * as path from "node:path";
 import { readJSON } from "#/functions/readJSON";
 import { deepMerge } from "#/functions/deepMerge";
 
+import { set, get } from "#/utils/store";
+
 type tsConfigLoaderOptions = {
     path: string;
+    cache?: boolean;
 };
 
 type ExtendedTranspileOptions = TranspileOptions & {
@@ -16,39 +19,52 @@ type ExtendedTranspileOptions = TranspileOptions & {
 const tsConfigLoader = async (
     options: tsConfigLoaderOptions,
 ): Promise<TranspileOptions | null> => {
+    const cache: boolean = options.cache !== false;
+
+    // cache
+    if (cache) {
+        const cached: string | undefined = await get("tsConfig");
+        if (cached) return await JSON.parse(cached);
+    }
+
     // declarations
     const o: tsConfigLoaderOptions = options;
-    const tsConfig: TranspileOptions | null = await readJSON<TranspileOptions>(
+    const json: TranspileOptions | null = await readJSON<TranspileOptions>(
         o.path,
     );
 
-    const exTsConfig: ExtendedTranspileOptions | null =
-        tsConfig as ExtendedTranspileOptions | null;
+    const extJson: ExtendedTranspileOptions | null =
+        json as ExtendedTranspileOptions | null;
 
     /* If the config file is extended from another file, merge them */
 
-    if (exTsConfig?.extends) {
+    if (extJson?.extends) {
         const extendedConfigPath: string = path.resolve(
             path.dirname(o.path),
-            exTsConfig.extends,
+            extJson.extends,
         );
 
         const extendedConfig: TranspileOptions | null = await tsConfigLoader({
             path: extendedConfigPath,
+            cache: false,
         });
 
         if (extendedConfig) {
             // merge
             const merged: TranspileOptions = await deepMerge(
                 extendedConfig,
-                tsConfig,
+                extJson,
             );
+
+            cache && merged && (await set("tsConfig", JSON.stringify(merged)));
 
             return merged;
         }
     }
 
-    return tsConfig;
+    cache && json && (await set("tsConfig", JSON.stringify(json)));
+
+    return extJson;
 };
 
 export { tsConfigLoader };
