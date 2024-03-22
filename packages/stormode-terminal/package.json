@@ -2,13 +2,6 @@
     "name": "stormode-terminal",
     "version": "0.2.0",
     "description": "Stormode Terminal, for better console log experience",
-    "homepage": "https://stormode.dev",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/stormode/stormode.git",
-        "directory": "packages/stormode-terminal"
-    },
-    "license": "MIT",
     "keywords": [
         "Stormode Terminal",
         "Stormode",
@@ -33,9 +26,21 @@
         "js",
         "JavaScript"
     ],
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "homepage": "https://stormode.dev",
+    "bugs": "https://github.com/stormode/stormode/issues",
+    "license": "MIT",
+    "author": "Alpheus Tang",
     "files": [
         "dist"
-    ]
+    ],
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/stormode/stormode.git",
+        "directory": "packages/stormode-terminal"
+    },
+    "engines": {
+        "node": ">=16"
+    }
 }

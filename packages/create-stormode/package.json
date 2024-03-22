@@ -2,13 +2,6 @@
     "name": "create-stormode",
     "version": "0.4.0",
     "description": "Create a Stormode project with Stormode CLI",
-    "homepage": "https://stormode.dev",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/stormode/stormode.git",
-        "directory": "packages/create-stormode"
-    },
-    "license": "MIT",
     "keywords": [
         "Stormode",
         "create-stormode",
@@ -31,15 +24,24 @@
         "js",
         "JavaScript"
     ],
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "homepage": "https://stormode.dev",
+    "bugs": "https://github.com/stormode/stormode/issues",
+    "license": "MIT",
+    "author": "Alpheus Tang",
     "files": [
         "bin",
         "dist",
         "templates"
     ],
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "bin": {
         "create-stormode": "./bin/create-stormode"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/stormode/stormode.git",
+        "directory": "packages/create-stormode"
     },
     "dependencies": {
         "fs-extra": "^11.2.0",
@@ -51,5 +53,8 @@
         "@types/fs-extra": "^11.0.4",
         "@types/npm-registry-fetch": "^8.0.7",
         "@types/prompts": "^2.4.9"
+    },
+    "engines": {
+        "node": ">=16"
     }
 }

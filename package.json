@@ -1,8 +1,4 @@
 {
-    "private": true,
-    "workspaces": [
-        "packages/*"
-    ],
     "scripts": {
         "format": "npm-run-all --sequential format-tml format-pkg format-cli",
         "format-tml": "npm-run-all --sequential format-tml:eslint format-tml:prettier",
@@ -33,5 +29,9 @@
         "ts-node": "^10.9.2",
         "tsc-alias": "^1.8.8",
         "typescript": "^5.4.2"
-    }
+    },
+    "private": true,
+    "workspaces": [
+        "./packages/*"
+    ]
 }

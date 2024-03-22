@@ -2,13 +2,6 @@
     "name": "stormode",
     "version": "0.4.1",
     "description": "Stormode, a build tool for Node",
-    "homepage": "https://stormode.dev",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/stormode/stormode.git",
-        "directory": "packages/stormode"
-    },
-    "license": "MIT",
     "keywords": [
         "Stormode",
         "build tool",
@@ -30,14 +23,23 @@
         "js",
         "JavaScript"
     ],
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "homepage": "https://stormode.dev",
+    "bugs": "https://github.com/stormode/stormode/issues",
+    "license": "MIT",
+    "author": "Alpheus Tang",
     "files": [
         "bin",
         "dist"
     ],
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "bin": {
         "stormode": "./bin/stormode"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/stormode/stormode.git",
+        "directory": "packages/stormode"
     },
     "dependencies": {
         "@swc/core": "^1.4.8",
@@ -56,5 +58,8 @@
     },
     "peerDependencies": {
         "typescript": "*"
+    },
+    "engines": {
+        "node": ">=16"
     }
 }
