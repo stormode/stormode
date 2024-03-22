@@ -1,4 +1,4 @@
-import type { CompilerOptions } from "typescript";
+import type { Options as SwcOptions, Output } from "@swc/core";
 import type { Mode } from "#/@types/mode";
 import type { Config, ImpartialConfig } from "#/@types/config";
 import type { BuildArgs, DevArgs, PreviewArgs } from "#/@types/args";
@@ -7,11 +7,10 @@ import type { PackageJson } from "#/utils/package/config";
 import * as path from "node:path";
 
 import * as fse from "fs-extra";
+import { transformFile } from "@swc/core";
 
-import { cache, cwd, root } from "#/configs/env";
-import { tsExtensions } from "#/configs/extension";
+import { cache, root } from "#/configs/env";
 
-import { endsWithList } from "#/functions/endsWithList";
 import { getTranspiledName } from "#/functions/getTranspiledName";
 
 import { stormodePackageJsonLoader } from "#/utils/package/config";
@@ -27,19 +26,18 @@ type ConfigApplierOptions = {
     args: Partial<DevArgs | BuildArgs | PreviewArgs>;
 };
 
-const importErr: string =
-    "Unable to import the stormode config file, Please ensure that the config file exists and is in the correct format.";
-const readErr: string =
-    "Unable to read stormode config file, Please make sure you have a valid config setup or the correct format.";
+type ConfigLoggerOptions = {
+    name?: string;
+};
 
-const finder = async (): Promise<string> => {
+const finder = async (options: { path: string }): Promise<string> => {
     // declarations
     const base: string = "stormode.config.";
     const extensions: string[] = ["ts", "js", "cjs"];
 
     for (const ext of extensions) {
         const name: string = `${base}${ext}`;
-        const configPath: string = path.resolve(cwd, name);
+        const configPath: string = path.join(options.path, name);
         if (await fse.pathExists(configPath)) return name;
     }
 
@@ -130,11 +128,29 @@ const applier = async (
     return res;
 };
 
+const configLogger = async (options?: ConfigLoggerOptions): Promise<void> => {
+    // result
+    const { terminal } = await import("#/utils/terminal");
+    const pkj: PackageJson | null = await stormodePackageJsonLoader();
+
+    terminal.info(`Stormode v${pkj ? pkj.version : "0.0.0"}`);
+
+    if (options?.name) {
+        terminal.info(`Config loaded from ${options.name}`);
+    } else {
+        terminal.info(`Config loaded as default`);
+    }
+};
+
 const configLoader = async (
     options: ConfigLoaderOptions,
 ): Promise<ImpartialConfig> => {
     // declarations
-    const configName: string = await finder();
+    const configName: string = await finder({
+        path: root,
+    });
+
+    const configPath: string = path.join(root, configName);
 
     // load default if not exist
     if (configName === "") {
@@ -144,44 +160,52 @@ const configLoader = async (
             args: options.args,
         });
 
+        await configLogger();
+
         return result;
     }
 
     // declarations
-    const sourcePath: string = path.join(root, configName);
     let targetPath: string = path.join(root, configName);
 
     // if the config is a ts file
-    if (endsWithList(configName, tsExtensions)) {
+    if (configName.endsWith(".ts")) {
+        // declarations
         const targetName: string = getTranspiledName(configName);
         targetPath = path.join(cache, targetName);
 
-        let typescript: typeof import("typescript") | undefined;
-
-        try {
-            typescript = await import("typescript");
-        } catch (e: unknown) {
-            throw new Error("TypeScript dependency not found!");
-        }
-
-        // typescript config
-        const compilerOptions: CompilerOptions = {
-            target: typescript.ScriptTarget.ES5,
-            module: typescript.ModuleKind.CommonJS,
-            sourceMap: false,
-            inlineSourceMap: true,
-            inlineSources: false,
+        const swcOptions: SwcOptions = {
+            envName: process.env.NODE_ENV,
+            configFile: false,
+            jsc: {
+                target: "es5",
+                preserveAllComments: true,
+                parser: {
+                    syntax: "typescript",
+                },
+            },
+            module: {
+                type: "commonjs",
+                strict: true,
+                strictMode: true,
+            },
+            sourceMaps: true,
+            inlineSourcesContent: false,
+            outputPath: path.dirname(targetPath),
         };
 
         // transpile
-        const transpiled: string = typescript.transpile(
-            await fse.readFile(sourcePath, "utf-8"),
-            compilerOptions,
-            sourcePath,
-        );
+        const result: Output = await transformFile(configPath, swcOptions);
 
         // result
-        await fse.writeFile(targetPath, transpiled);
+        await fse.writeFile(
+            targetPath,
+            result.code +
+                (result.map
+                    ? `//# sourceMappingURL=${path.basename(targetPath)}.map`
+                    : ""),
+        );
+        result.map && (await fse.writeFile(targetPath + ".map", result.map));
 
         // check if exist
         if (!(await fse.exists(targetPath))) {
@@ -192,11 +216,17 @@ const configLoader = async (
     // import
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-var-requires
     const configModule: any = await require(targetPath);
-    if (!configModule) throw new Error(importErr);
+    if (!configModule)
+        throw new Error(
+            "Unable to import the stormode config file, Please ensure that the config file exists and is in the correct format.",
+        );
 
     // load
     const config: Config = configModule.default ?? configModule;
-    if (typeof config !== "object") throw new Error(readErr);
+    if (typeof config !== "object")
+        throw new Error(
+            "Unable to read stormode config file, Please make sure you have a valid config setup or the correct format.",
+        );
 
     // apply
     const result: ImpartialConfig = await applier({
@@ -205,13 +235,9 @@ const configLoader = async (
         args: options.args,
     });
 
+    await configLogger({ name: configName });
+
     // result
-    const { terminal } = await import("#/utils/terminal");
-    const pkj: PackageJson | null = await stormodePackageJsonLoader();
-
-    terminal.info(`Stormode v${pkj ? pkj.version : "0.0.0"}`);
-    terminal.info(`Config loaded from ${configName}`);
-
     return result;
 };
 
