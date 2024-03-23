@@ -1,4 +1,14 @@
-import type { JscTarget, Output, Options as SwcOptions } from "@swc/core";
+import type {
+    AmdConfig,
+    CommonJsConfig,
+    Es6Config,
+    JscTarget,
+    ModuleConfig,
+    NodeNextConfig,
+    Output,
+    Options as SwcOptions,
+    UmdConfig,
+} from "@swc/core";
 import type {
     CompilerOptions,
     ScriptTarget,
@@ -9,6 +19,7 @@ import type { ModuleType } from "#/functions/getModuleType";
 import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
+
 import { transformFile } from "@swc/core";
 import * as fse from "fs-extra";
 
@@ -25,6 +36,17 @@ type Options = {
     config: ImpartialConfig;
     inPath: string;
     outPath: string;
+};
+
+type NonSystemjsConfig =
+    | Es6Config
+    | CommonJsConfig
+    | UmdConfig
+    | AmdConfig
+    | NodeNextConfig;
+
+type ExtendedModuleConfig = ModuleConfig & {
+    resolveFully?: boolean;
 };
 
 const ESTarget = (val: keyof typeof ScriptTarget | undefined): JscTarget => {
@@ -76,6 +98,8 @@ const transpile = async (options: Options): Promise<void> => {
         config,
     });
 
+    const module = config.swc.module as NonSystemjsConfig | undefined;
+
     const swcOptions: SwcOptions = {
         envName: process.env.NODE_ENV,
         configFile: false,
@@ -89,6 +113,7 @@ const transpile = async (options: Options): Promise<void> => {
             ...config.swc.jsc,
             experimental: {
                 keepImportAttributes: true,
+                emitAssertForImportAttributes: true,
                 ...config.swc.jsc?.experimental,
             },
             parser: {
@@ -118,28 +143,32 @@ const transpile = async (options: Options): Promise<void> => {
                 type === "es6" ||
                 type === "nodenext") && {
                 strict:
-                    // @ts-expect-error - non-systemjs config
-                    config.swc.module?.strict ??
+                    // swc
+                    module?.strict ??
                     // tsconfig.json
                     compilerOptions?.strict ??
                     // default
                     false,
                 strictMode:
-                    // @ts-expect-error - non-systemjs config
-                    config.swc.module?.strictMode ??
+                    // swc
+                    module?.strictMode ??
                     // tsconfig.json
                     compilerOptions?.alwaysStrict ??
                     // default
                     true,
                 importInterop:
-                    // @ts-expect-error - non-systemjs config
-                    config.swc.module?.importInterop ??
+                    // swc
+                    module?.importInterop ??
                     // tsconfig.json
                     (compilerOptions?.esModuleInterop ? "swc" : "none"),
-                // esm require file extension
+                /**
+                 * To resolve the path fully in ES modules:
+                 * https://swc.rs/docs/configuration/modules#resolvefully
+                 */
                 resolveFully:
-                    // @ts-expect-error - https://swc.rs/docs/configuration/modules#resolvefully
-                    config.swc.module?.resolveFully ??
+                    // swc
+                    (config.swc.module as ExtendedModuleConfig | undefined)
+                        ?.resolveFully ??
                     // package.json
                     (packageJson?.type?.toLowerCase() === "module"
                         ? true
