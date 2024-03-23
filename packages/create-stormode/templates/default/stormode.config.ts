@@ -1,5 +1,5 @@
 import type { Config } from "stormode";
 
-const config = {} satisfies Config;
+const config: Config = {};
 
 export default config;

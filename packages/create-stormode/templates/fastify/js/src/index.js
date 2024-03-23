@@ -1,21 +1,22 @@
 const fastify = require("fastify");
 
-const useRouter = require("./router");
-
-const isDev = process.env.NODE_ENV === "development";
-
-const server = fastify({ logger: isDev });
-const port = Number(process.env.PORT);
-
-// use router
-useRouter(server);
+const route = require("./router");
 
 // listener
-server.listen({ port: port }, (e) => {
-    if (e) {
-        console.error(e instanceof Error ? e.message : "Error");
+(async () => {
+    try {
+        const server = fastify();
+        const port = Number(process.env.PORT ?? 4001);
+
+        // use router
+        route(server);
+
+        await server.listen({ port: port });
+
+        const msg = `Server running on: http://0.0.0.0:${port}`;
+        console.log("- [\x1b[38;5;10mready\x1b[0m]", msg);
+    } catch (e) {
+        console.error(e instanceof Error ? e.message : String(e));
         process.exit(1);
     }
-    const msg = `Server running on: http://0.0.0.0:${port}`;
-    console.log("- [\x1b[38;5;10mready\x1b[0m]", msg);
-});
+})();

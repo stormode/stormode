@@ -2,7 +2,7 @@ import type { Application, Request, Response } from "express";
 
 import { Router } from "express";
 
-const useRouter = (app: Application): void => {
+const route = (app: Application): void => {
     // declarations
     const router: Router = Router();
 
@@ -16,4 +16,4 @@ const useRouter = (app: Application): void => {
     app.use("/", router);
 };
 
-export default useRouter;
+export default route;

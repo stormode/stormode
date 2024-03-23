@@ -1,6 +1,6 @@
 const { Router } = require("express");
 
-const useRouter = (app) => {
+const route = (app) => {
     // declarations
     const router = Router();
 
@@ -14,4 +14,4 @@ const useRouter = (app) => {
     app.use("/", router);
 };
 
-module.exports = useRouter;
+module.exports = route;

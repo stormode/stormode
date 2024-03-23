@@ -1,156 +1,24 @@
-import type {
-    Answers,
-    Framework,
-    FwChoice,
-    Variant,
-    VrChoice,
-} from "./@types/question";
+import type { Answers, Framework, VrChoice } from "#/@types/question";
 
 import * as path from "node:path";
 
 import * as fse from "fs-extra";
-import fetch from "npm-registry-fetch";
 import prompts from "prompts";
 import terminal, { color } from "stormode-terminal";
 
+import { copyContent } from "#/functions/copyContent";
+import { latest } from "#/functions/getLatestVersion";
+
+import { getFramework, getFrameworkVariant } from "#/utils/framework";
+
+type Dependencies = {
+    [key: string]: string;
+};
+
 const cwd: string = process.cwd();
+const root: string = path.resolve(cwd);
 
-const frameworks: Framework[] = [
-    {
-        title: "Vanilla",
-        value: "vanilla",
-        color: color.green,
-        variants: [
-            {
-                title: "Vanilla + TypeScript",
-                value: "ts",
-                color: color.blue,
-            },
-            {
-                title: "Vanilla + JavaScript",
-                value: "js",
-                color: color.yellow,
-            },
-        ],
-    },
-    {
-        title: "Express",
-        value: "express",
-        color: color.yellow,
-        variants: [
-            {
-                title: "Express + TypeScript",
-                value: "ts",
-                color: color.blue,
-            },
-            {
-                title: "Express + JavaScript",
-                value: "js",
-                color: color.yellow,
-            },
-        ],
-    },
-    {
-        title: "Koa",
-        value: "koa",
-        color: color.purple,
-        variants: [
-            {
-                title: "Koa + TypeScript",
-                value: "ts",
-                color: color.blue,
-            },
-            {
-                title: "Koa + JavaScript",
-                value: "js",
-                color: color.yellow,
-            },
-        ],
-    },
-    {
-        title: "Fastify",
-        value: "fastify",
-        color: null,
-        variants: [
-            {
-                title: "Fastify + TypeScript",
-                value: "ts",
-                color: color.blue,
-            },
-            {
-                title: "Fastify + JavaScript",
-                value: "js",
-                color: color.yellow,
-            },
-        ],
-    },
-];
-
-const getFramework = (): FwChoice[] => {
-    return frameworks.map(
-        (fw: Framework): FwChoice => ({
-            title: fw.color ? fw.color(fw.title) : fw.title,
-            value: fw,
-        }),
-    );
-};
-
-const getVariant = (fw: Framework): VrChoice[] => {
-    const choices: VrChoice[] = [];
-    fw.variants?.map((variant: Variant): void => {
-        choices.push({
-            title: variant.color(variant.title),
-            value: variant.value,
-        });
-    });
-    return choices;
-};
-
-type PkgInfo = {
-    "dist-tags": {
-        latest: string;
-        [tag: string]: string;
-    };
-};
-
-const lastVer = async (name: string): Promise<string> => {
-    try {
-        const registryUrl: string = "https://registry.npmjs.org/";
-        const packageUrl: string = `${registryUrl}${name}`;
-
-        const response: PkgInfo = (await fetch.json(packageUrl)) as PkgInfo;
-        const latestVersion: string = response["dist-tags"].latest;
-        return `^${latestVersion}`;
-    } catch (e: unknown) {
-        const ermsg: string = `Failed to get the latest version of ${name}`;
-        throw new Error(ermsg);
-    }
-};
-
-const copyContent = async (source: string, target: string): Promise<void> => {
-    try {
-        await fse.ensureDir(target);
-
-        const files: string[] = await fse.readdir(source);
-
-        for (const file of files) {
-            const cSource: string = path.join(source, file);
-            const cTarget: string = path.join(target, file);
-            const stat: fse.Stats = await fse.stat(cSource);
-
-            if (stat.isDirectory()) {
-                await copyContent(cSource, cTarget);
-            } else {
-                await fse.copyFile(cSource, cTarget);
-            }
-        }
-    } catch (e: unknown) {
-        const ermsg: string = `failed to copy content from ${source} to ${target}`;
-        throw new Error(ermsg);
-    }
-};
-
-const main = async (): Promise<void> => {
+(async (): Promise<void> => {
     try {
         // welcome message
         terminal.info(`Welcome to ${color.blue("Stormode")}`);
@@ -177,7 +45,8 @@ const main = async (): Promise<void> => {
                     },
                     name: "variant",
                     message: "Select a variant:",
-                    choices: (fw: Framework): VrChoice[] => getVariant(fw),
+                    choices: (fw: Framework): VrChoice[] =>
+                        getFrameworkVariant(fw),
                 },
             ],
             {
@@ -190,74 +59,75 @@ const main = async (): Promise<void> => {
 
         terminal.wait("Creating project...");
 
-        // name: any;
-        // framework: vanilla | express | koa;
-        // variant: ts | js;
+        // answers
         const name: string = answers.name.toLowerCase();
-        const framework: string = answers.framework.value;
-        const variant: string = answers.variant;
+        const framework: "vanilla" | "express" | "fastify" | "koa" =
+            answers.framework.value;
+        const variant: "ts" | "js" = answers.variant;
 
         // for framework specific contents
         const isExpress: boolean = framework === "express";
         const isKoa: boolean = framework === "koa";
         const isFastify: boolean = framework === "fastify";
 
+        // is it typescript
         const isTs: boolean = variant === "ts";
 
-        // stormode root
-        const packageDir: string = path.resolve(__dirname, "..");
-        // target project root
-        let targetDir: string = path.resolve(cwd, name);
+        // create-stormode root
+        const packageRoot: string = path.resolve(__dirname, "..");
+        // project root
+        let projectRoot: string = path.join(root, name);
 
         // change target project name on repeat
-        let counter = 2;
+        let counter: number = 2;
         const existmsg: string = `Folder (${name}${
             counter > 2 ? `-${(counter - 1).toString()}` : ""
         }) already exists`;
         const existmsg2: string = `project renamed to (${name}-${counter})`;
 
-        while (await fse.exists(targetDir)) {
-            targetDir = path.resolve(cwd, `${name}-${counter}`);
+        while (await fse.exists(projectRoot)) {
+            projectRoot = path.join(root, `${name}-${counter}`);
             terminal.info(`${existmsg}, ${existmsg2}`);
             counter++;
         }
 
-        await fse.mkdir(targetDir);
+        // generate directory
+        await fse.mkdir(projectRoot);
 
         // fetch latest dependencies
         terminal.wait("Fetching dependencies data...");
 
-        const dependencies = {
+        const dependencies: Dependencies = {
             // express
             ...(isExpress
                 ? {
-                      express: await lastVer("express"),
-                      cors: await lastVer("cors"),
-                      "cookie-parser": await lastVer("cookie-parser"),
+                      express: await latest("express"),
+                      cors: await latest("cors"),
+                      "cookie-parser": await latest("cookie-parser"),
                   }
                 : {}),
             // koa
             ...(isKoa
                 ? {
-                      koa: await lastVer("koa"),
-                      "koa-router": await lastVer("koa-router"),
+                      koa: await latest("koa"),
+                      "koa-router": await latest("koa-router"),
                   }
                 : {}),
             // fastify
             ...(isFastify
                 ? {
-                      fastify: await lastVer("fastify"),
+                      fastify: await latest("fastify"),
                   }
                 : {}),
         };
 
-        const tsDevDependencies = {
+        const tsDevDependencies: Dependencies = {
             // express
             ...(isExpress
                 ? {
-                      "@types/express": await lastVer("@types/express"),
-                      "@types/cors": await lastVer("@types/cors"),
-                      "@types/cookie-parser": await lastVer(
+                      "@types/express": await latest("@types/express"),
+                      "@types/cors": await latest("@types/cors"),
+                      "@types/cookie-parser": await latest(
                           "@types/cookie-parser",
                       ),
                   }
@@ -265,12 +135,12 @@ const main = async (): Promise<void> => {
             // koa
             ...(isKoa
                 ? {
-                      "@types/koa": await lastVer("@types/koa"),
-                      "@types/koa-router": await lastVer("@types/koa-router"),
+                      "@types/koa": await latest("@types/koa"),
+                      "@types/koa-router": await latest("@types/koa-router"),
                   }
                 : {}),
-            "@types/node": await lastVer("@types/node"),
-            typescript: await lastVer("typescript"),
+            "@types/node": await latest("@types/node"),
+            typescript: await latest("typescript"),
         };
 
         // package.json
@@ -280,19 +150,20 @@ const main = async (): Promise<void> => {
             private: true,
             scripts: {
                 dev: "stormode dev",
-                build: "stormode build",
+                build: isTs ? "tsc && stormode build" : "stormode build",
                 preview: "stormode preview",
             },
             dependencies: dependencies,
             devDependencies: {
                 ...(isTs ? tsDevDependencies : {}),
-                stormode: await lastVer("stormode"),
+                stormode: await latest("stormode"),
             },
         };
 
         const packageJsonData: string = JSON.stringify(packageJson, null, 4);
+
         await fse.writeFile(
-            path.join(targetDir, "package.json"),
+            path.join(projectRoot, "package.json"),
             packageJsonData,
         );
 
@@ -327,7 +198,7 @@ const main = async (): Promise<void> => {
             );
 
             await fse.writeFile(
-                path.join(targetDir, "tsconfig.json"),
+                path.join(projectRoot, "tsconfig.json"),
                 tsconfigJsonData,
             );
         }
@@ -336,7 +207,7 @@ const main = async (): Promise<void> => {
 
         // copy default files
         const templateDefault: string = path.resolve(
-            packageDir,
+            packageRoot,
             "templates",
             "default",
         );
@@ -344,19 +215,19 @@ const main = async (): Promise<void> => {
         // .gitignore
         await fse.copy(
             path.join(templateDefault, "_gitignore"),
-            path.join(targetDir, ".gitignore"),
+            path.join(projectRoot, ".gitignore"),
         );
 
         // .env.development
         await fse.copy(
             path.join(templateDefault, ".env.development"),
-            path.join(targetDir, ".env.development"),
+            path.join(projectRoot, ".env.development"),
         );
 
         // .env.production
         await fse.copy(
             path.join(templateDefault, ".env.production"),
-            path.join(targetDir, ".env.production"),
+            path.join(projectRoot, ".env.production"),
         );
 
         // stormode.config.js
@@ -364,24 +235,22 @@ const main = async (): Promise<void> => {
 
         await fse.copy(
             path.join(templateDefault, SmConfigName),
-            path.join(targetDir, SmConfigName),
+            path.join(projectRoot, SmConfigName),
         );
 
         // specific template
         const template: string = path.resolve(
-            packageDir,
+            packageRoot,
             "templates",
             framework ?? "vanilla",
             variant ?? "js",
         );
 
-        await copyContent(template, targetDir);
+        await copyContent(template, projectRoot);
 
         // done
         terminal.ready("Project created successfully");
     } catch (e: unknown) {
         terminal.error(e instanceof Error ? e.message : String(e));
     }
-};
-
-main();
+})();
