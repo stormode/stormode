@@ -16,6 +16,15 @@ import { runBuild } from "#/commands/build";
 import { runDev } from "#/commands/dev";
 import { runPreview } from "#/commands/preview";
 
+const programWithBaseOptions = (program: Command): Command => {
+    return program
+        .option("-c, --config <path>", "config file path")
+        .option(
+            "--withtime, --withTime, --withTime <utc | local>",
+            "terminal with time",
+        );
+};
+
 (async (): Promise<void> => {
     try {
         // declarations
@@ -37,16 +46,9 @@ import { runPreview } from "#/commands/preview";
             );
 
         // dev
-        program
-            .command("dev")
-            .description("development server")
-            // base
-            .option("-c, --config <path>", "config file path")
-            .option(
-                "--withtime, --withTime, --withTime <utc | local>",
-                "terminal with time",
-            )
-            // dev
+        programWithBaseOptions(
+            program.command("dev").description("development server"),
+        )
             .option("--rootdir, --rootDir <directory>", "input directory")
             .option("--outdir, --outDir <directory>", "output directory")
             .option("--index <file>", "index file name")
@@ -58,16 +60,9 @@ import { runPreview } from "#/commands/preview";
             });
 
         // build
-        program
-            .command("build")
-            .description("project builder")
-            // base
-            .option("-c, --config <path>", "config file path")
-            .option(
-                "--withtime, --withTime, --withTime <utc | local>",
-                "terminal with time",
-            )
-            // build
+        programWithBaseOptions(
+            program.command("build").description("project builder"),
+        )
             .option("-e, --env <name>", "environment name")
             .option("--rootdir, --rootDir <directory>", "input directory")
             .option("--outdir, --outDir <directory>", "output directory")
@@ -84,16 +79,9 @@ import { runPreview } from "#/commands/preview";
             });
 
         // preview
-        program
-            .command("preview")
-            .description("production preview")
-            //base
-            .option("-c, --config <path>", "config file path")
-            .option(
-                "--withtime, --withTime, --withTime <utc | local>",
-                "terminal with time",
-            )
-            // preview
+        programWithBaseOptions(
+            program.command("preview").description("production preview"),
+        )
             .option("--outdir, --outDir <directory>", "output path")
             .option("--index <file>", "index file name")
             .action(async (_args: PreviewArgs): Promise<void> => {
