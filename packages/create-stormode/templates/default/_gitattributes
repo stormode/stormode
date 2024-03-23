@@ -1,0 +1,48 @@
+# Set text files to use LF line endings
+* text eol=lf
+
+# Audio files
+*.aac binary
+*.aiff binary
+*.alac binary
+*.flac binary
+*.mp3 binary
+*.ogg binary
+*.wav binary
+
+# Image files
+*.avif binary
+*.gif binary
+*.heif binary
+*.jpeg binary
+*.jpg binary
+*.png binary
+*.tiff binary
+*.tif binary
+*.webp binary
+
+# Video files 
+*.avi binary
+*.flv binary
+*.mkv binary
+*.mov binary
+*.mp4 binary
+*.mpeg binary
+*.mpg binary
+*.webm binary
+*.wmv binary
+
+# Raw files
+*.arw binary
+*.crw binary
+*.dng binary
+*.nef binary
+*.nrw binary
+*.raf binary
+*.raw binary
+*.x3f binary
+
+# Other files
+*.eps binary
+*.pdf binary
+*.psd binary

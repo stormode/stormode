@@ -1,3 +1,5 @@
-# Auto detect text files and perform LF normalization
+# Set text files to use LF line endings
 * text eol=lf
+
+# Image files
 *.png binary

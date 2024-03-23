@@ -7,7 +7,7 @@
             "./**/.DS_Store",
             "./**/node_modules/**/*",
             "./**/dist/**/*",
-            "./pnpm-lock/yaml"
+            "./pnpm-lock.yaml"
         ],
         "ignoreUnknown": true
     },
@@ -72,7 +72,7 @@
     },
     "overrides": [
         {
-            "include": ["./tsconfig.base.json", "./**/tsconfig.json"],
+            "include": ["./**/tsconfig.base.json", "./**/tsconfig.json"],
             "json": {
                 "parser": {
                     "allowComments": true,

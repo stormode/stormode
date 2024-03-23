@@ -212,6 +212,12 @@ const root: string = path.resolve(cwd);
             "default",
         );
 
+        // .gitattributes
+        await fse.copy(
+            path.join(templateDefault, "_gitattributes"),
+            path.join(projectRoot, ".gitattributes"),
+        );
+
         // .gitignore
         await fse.copy(
             path.join(templateDefault, "_gitignore"),
