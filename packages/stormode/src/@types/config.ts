@@ -1,13 +1,5 @@
-import type { EnvConfig, JscConfig, ModuleConfig } from "@swc/core";
-
-/**
- * swc config
- */
-type SwcConfig = {
-    env: EnvConfig;
-    jsc: JscConfig;
-    module: ModuleConfig;
-};
+import type { Options as SwcOptions } from "@swc/core";
+import type { BuildOptions } from "esbuild";
 
 /**
  * Base config
@@ -39,11 +31,11 @@ type BaseConfig = {
      */
     tsconfig: string;
     /**
-     * swc config
+     * swc config to override the preset
      * @see https://swc.rs/docs/configuration/compilation
      * @default {}
      */
-    swc: Partial<SwcConfig>;
+    swc: Omit<SwcOptions, "sourceMaps" | "inlineSourcesContent" | "outputPath">;
 };
 
 /**
@@ -67,9 +59,8 @@ type ServerConfig = {
  */
 type BuildConfig = {
     /**
-     * Target platform to build
-     * @see https://esbuild.github.io/api/#platform
-     * @default "node"
+     * @deprecated
+     * @use esbuild.platform
      */
     platform: "node" | "browser";
     /**
@@ -97,6 +88,15 @@ type BuildConfig = {
      * @use tsconfig from base config
      */
     tsconfig: string;
+    /**
+     * esbuild config to override the preset
+     * @see https://esbuild.github.io/api
+     * @default {}
+     */
+    esbuild: Omit<
+        BuildOptions,
+        "entryPoints" | "bundle" | "minify" | "sourcemap"
+    >;
 };
 
 type Config = Partial<
@@ -106,9 +106,9 @@ type Config = Partial<
     }
 >;
 
-type ImpartialConfig = BaseConfig & {
+type FullConfig = BaseConfig & {
     server: ServerConfig;
     build: BuildConfig;
 };
 
-export type { Config, ImpartialConfig };
+export type { Config, FullConfig };

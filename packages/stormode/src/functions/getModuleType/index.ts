@@ -1,5 +1,5 @@
 import type { CompilerOptions, ModuleKind, TranspileOptions } from "typescript";
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
@@ -12,7 +12,7 @@ import { tsConfigLoader } from "#/utils/typescript/config";
 type ModuleType = "es6" | "nodenext" | "commonjs";
 
 type GetModuleOptions = {
-    config: ImpartialConfig;
+    config: FullConfig;
 };
 
 // biome-ignore lint: string

@@ -1,6 +1,6 @@
 import type { Output, Options as SwcOptions } from "@swc/core";
 import type { BuildArgs, DevArgs, PreviewArgs } from "#/@types/args";
-import type { Config, ImpartialConfig } from "#/@types/config";
+import type { Config, FullConfig } from "#/@types/config";
 import type { Mode } from "#/@types/mode";
 import type { PackageJson } from "#/utils/package/config";
 
@@ -44,9 +44,7 @@ const finder = async (options: { path: string }): Promise<string> => {
     return "";
 };
 
-const applier = async (
-    options: ConfigApplierOptions,
-): Promise<ImpartialConfig> => {
+const applier = async (options: ConfigApplierOptions): Promise<FullConfig> => {
     // declarations
     const { config, mode, args } = options;
 
@@ -95,7 +93,7 @@ const applier = async (
         : "index.js";
 
     // result
-    const res: ImpartialConfig = {
+    const res: FullConfig = {
         withTime: config.withTime ?? false,
         rootDir: config.rootDir ?? "src",
         outDir: config.outDir ?? "dist",
@@ -112,8 +110,8 @@ const applier = async (
             minify: config.build?.minify ?? false,
             sourcemap: config.build?.sourceMap ?? false,
             sourceMap: config.build?.sourceMap ?? false,
-            /** @deprecated */
             tsconfig: config.build?.tsconfig ?? "tsconfig.json",
+            esbuild: config.build?.esbuild ?? {},
         },
     };
 
@@ -144,7 +142,7 @@ const configLogger = async (options?: ConfigLoggerOptions): Promise<void> => {
 
 const configLoader = async (
     options: ConfigLoaderOptions,
-): Promise<ImpartialConfig> => {
+): Promise<FullConfig> => {
     // declarations
     const configName: string = await finder({
         path: root,
@@ -154,7 +152,7 @@ const configLoader = async (
 
     // load default if not exist
     if (configName === "") {
-        const result: ImpartialConfig = await applier({
+        const result: FullConfig = await applier({
             config: {},
             mode: options.mode,
             args: options.args,
@@ -229,7 +227,7 @@ const configLoader = async (
         );
 
     // apply
-    const result: ImpartialConfig = await applier({
+    const result: FullConfig = await applier({
         config: config,
         mode: options.mode,
         args: options.args,

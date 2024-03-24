@@ -1,9 +1,9 @@
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 
 import { transpile } from "#/utils/transpile/transpile";
 
 type BuildFileOptions = {
-    config: ImpartialConfig;
+    config: FullConfig;
     inPath: string;
     outPath: string;
 };

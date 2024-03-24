@@ -1,4 +1,4 @@
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 
 import * as path from "node:path";
 
@@ -13,7 +13,7 @@ import { injectEnv } from "#/functions/inject/env";
 import { getProcessEnv } from "#/utils/env";
 
 type BundleOptions = {
-    config: ImpartialConfig;
+    config: FullConfig;
     inDir: string;
     outDir: string;
 };
@@ -31,17 +31,22 @@ const bundleProcess = async (options: BundleProcessOptions): Promise<void> => {
 
     await esbuild({
         // common options
-        sourcemap: config.build.sourceMap,
         format,
-        platform: config.build.platform,
-        minify: config.build.minify,
+        platform: "node",
         define: await getProcessEnv(),
         logLevel: "silent",
         // build options
-        bundle: true,
         outfile: path.join(outDir, index),
         allowOverwrite: true,
+        chunkNames: "chunks/[name]-[hash]",
+        assetNames: "assets/[name]-[hash]",
+        // override
+        ...config.build.esbuild,
+        // no override
         entryPoints: [inDir],
+        bundle: true,
+        minify: config.build.minify,
+        sourcemap: config.build.sourceMap,
     });
 
     // keep only index.js / index.js.map
@@ -49,7 +54,15 @@ const bundleProcess = async (options: BundleProcessOptions): Promise<void> => {
 
     await Promise.all(
         files.map(async (file: string): Promise<void> => {
-            if (!endsWithList(file, [index, `${index}.map`, "package.json"]))
+            if (
+                !endsWithList(file, [
+                    index,
+                    `${index}.map`,
+                    "package.json",
+                    "chunks",
+                    "assets",
+                ])
+            )
                 await fse.rm(path.join(outDir, file), { recursive: true });
         }),
     );

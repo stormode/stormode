@@ -1,4 +1,4 @@
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
@@ -12,7 +12,7 @@ import { bundle } from "#/utils/bundle";
 import { packageJsonLoader } from "#/utils/package/config";
 import { transpileDir } from "#/utils/transpile/dir";
 
-const runBuild = async (config: ImpartialConfig): Promise<void> => {
+const runBuild = async (config: FullConfig): Promise<void> => {
     // declarations
     const { terminal } = await import("#/utils/terminal");
 

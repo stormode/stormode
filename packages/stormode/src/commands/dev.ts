@@ -1,4 +1,4 @@
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
@@ -18,7 +18,7 @@ import { transpileDir } from "#/utils/transpile/dir";
 import { transpileFile } from "#/utils/transpile/file";
 
 type RebuildOnChangeOptions = {
-    config: ImpartialConfig;
+    config: FullConfig;
     inDir: string;
     outDir: string;
     file: string;
@@ -48,7 +48,7 @@ const rebuild = async (options: RebuildOnChangeOptions): Promise<void> => {
     }
 };
 
-const runDev = async (config: ImpartialConfig): Promise<void> => {
+const runDev = async (config: FullConfig): Promise<void> => {
     // declarations
     const { terminal } = await import("#/utils/terminal");
 

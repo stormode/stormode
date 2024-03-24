@@ -1,5 +1,5 @@
 import type { BuildArgs, DevArgs, PreviewArgs } from "#/@types/args";
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 import type { Mode } from "#/@types/mode";
 import type { PackageJson } from "#/utils/package/config";
 
@@ -68,7 +68,6 @@ const programWithBaseOptions = (program: Command): Command => {
             .option("--outdir, --outDir <directory>", "output directory")
             .option("--index <file>", "index file name")
             .option("--tsconfig <path>", "tsconfig.json path")
-            .option("--platform <node | browser>", "platform")
             .option("--bundle", "bundle code")
             .option("--minify", "minify code")
             .option("--map, --sourcemap, --sourceMap", "generate sourcemap")
@@ -96,7 +95,7 @@ const programWithBaseOptions = (program: Command): Command => {
         await fse.ensureDir(cache);
 
         // load config
-        const config: ImpartialConfig = await configLoader({
+        const config: FullConfig = await configLoader({
             mode: mode,
             args: args,
         });

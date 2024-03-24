@@ -14,7 +14,7 @@ import type {
     ScriptTarget,
     TranspileOptions,
 } from "typescript";
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 import type { ModuleType } from "#/functions/getModuleType";
 import type { PackageJson } from "#/utils/package/config";
 
@@ -33,7 +33,7 @@ import { packageJsonLoader } from "#/utils/package/config";
 import { tsConfigLoader } from "#/utils/typescript/config";
 
 type Options = {
-    config: ImpartialConfig;
+    config: FullConfig;
     inPath: string;
     outPath: string;
 };
@@ -101,8 +101,12 @@ const transpile = async (options: Options): Promise<void> => {
     const module = config.swc.module as NonSystemjsConfig | undefined;
 
     const swcOptions: SwcOptions = {
+        // base
         envName: process.env.NODE_ENV,
         configFile: false,
+        // override
+        ...config.swc,
+        // with preset
         env: config.swc.env,
         jsc: {
             target: target,
@@ -175,6 +179,7 @@ const transpile = async (options: Options): Promise<void> => {
                         : false),
             }),
         },
+        // no override
         sourceMaps: isDev() ? true : config.build.sourceMap,
         inlineSourcesContent: false,
         outputPath: path.dirname(outPath), // for source map

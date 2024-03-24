@@ -1,4 +1,4 @@
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 
 import * as path from "node:path";
 
@@ -12,7 +12,7 @@ import { getTranspiledName } from "#/functions/getTranspiledName";
 import { transpile } from "#/utils/transpile/transpile";
 
 type BuildDirOptions = {
-    config: ImpartialConfig;
+    config: FullConfig;
     inDir: string;
     outDir: string;
 };

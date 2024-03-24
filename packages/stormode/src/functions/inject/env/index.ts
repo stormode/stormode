@@ -1,9 +1,9 @@
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 
 import { readFile, writeFile } from "fs-extra";
 
 type InjectEnvOptions = {
-    config: ImpartialConfig;
+    config: FullConfig;
     path: string;
 };
 

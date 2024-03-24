@@ -1,4 +1,4 @@
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 
 import * as path from "node:path";
 
@@ -15,7 +15,7 @@ import { injectEnv } from "#/functions/inject/env";
 import { getProcessEnv } from "#/utils/env";
 
 type BuildOptions = {
-    config: ImpartialConfig;
+    config: FullConfig;
     inDir: string;
     outDir: string;
 };
@@ -53,16 +53,19 @@ const buildProcess = async (options: BuildProcessOptions): Promise<void> => {
                 if (endsWithList(inPath, jsExtensions)) {
                     await esbuild({
                         // common options
-                        sourcemap: config.build.sourceMap,
                         format,
-                        minify: config.build.minify,
                         define: await getProcessEnv(),
                         logLevel: "silent",
                         // build options
-                        bundle: false,
                         outfile: outPath,
                         allowOverwrite: true,
+                        // override
+                        ...config.build.esbuild,
+                        // no override
                         entryPoints: [inPath],
+                        bundle: false,
+                        minify: config.build.minify,
+                        sourcemap: config.build.sourceMap,
                     });
                 }
             }

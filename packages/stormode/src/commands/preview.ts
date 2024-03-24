@@ -1,4 +1,4 @@
-import type { ImpartialConfig } from "#/@types/config";
+import type { FullConfig } from "#/@types/config";
 
 import * as path from "node:path";
 
@@ -9,7 +9,7 @@ import { root } from "#/configs/env";
 import { execute } from "#/functions/execute";
 import { getTranspiledName } from "#/functions/getTranspiledName";
 
-const runPreview = async (config: ImpartialConfig): Promise<void> => {
+const runPreview = async (config: FullConfig): Promise<void> => {
     const outDir: string = path.join(root, config.outDir);
     const outFile: string = getTranspiledName(config.index);
     const outPath: string = path.join(outDir, outFile);
