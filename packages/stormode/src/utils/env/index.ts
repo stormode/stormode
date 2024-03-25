@@ -28,25 +28,6 @@ type ProcessEnvFile = {
 const processEnvFiles: ProcessEnvFile[] = [];
 const processEnv: Envs = {};
 
-const isValidNumber = (val: string | undefined): boolean => {
-    const valid: RegExp = /^[0-9]+(?:_[0-9]+)*(\.[0-9]+)?$/;
-
-    if (
-        // no undefined
-        val === undefined ||
-        // no empty
-        val.trim() === "" ||
-        // no invalid
-        !valid.test(val.trim())
-    ) {
-        return false;
-    }
-
-    const num: number = Number.parseFloat(val);
-
-    return !Number.isNaN(num);
-};
-
 // load env from process.env
 const initProcessEnv = async (): Promise<void> => {
     for (const key in process.env) {
@@ -55,9 +36,7 @@ const initProcessEnv = async (): Promise<void> => {
 
         if (!valid) continue;
 
-        processEnv[`process.env.${key}`] = isValidNumber(process.env[key])
-            ? (process.env[key] as string)
-            : JSON.stringify(process.env[key]);
+        processEnv[`process.env.${key}`] = JSON.stringify(process.env[key]);
     }
 };
 
@@ -104,15 +83,13 @@ const loadProcessEnvFromFiles = async (): Promise<void> => {
         result = dotenvExpand.expand(result);
 
         for (const key in result.parsed) {
-            const parsed: string = isValidNumber(result.parsed[key])
-                ? result.parsed[key]
-                : JSON.stringify(result.parsed[key]);
-
             // for dev
-            process.env[key] = parsed;
+            process.env[key] = result.parsed[key];
 
             // for build and bundle
-            processEnv[`process.env.${key}`] = parsed;
+            processEnv[`process.env.${key}`] = JSON.stringify(
+                result.parsed[key],
+            );
         }
     }
 };

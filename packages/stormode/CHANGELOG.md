@@ -1,3 +1,10 @@
+## 0.5.1 (2024-03-25)
+
+### What's Changed
+
+-   Fix on env
+-   Add the missing support for transpiling `jsx` and `tsx`
+
 ## 0.5.0 (2024-03-25)
 
 ### What's New

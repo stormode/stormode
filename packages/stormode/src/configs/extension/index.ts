@@ -1,5 +1,5 @@
-const tsExtensions: string[] = [".ts", ".mts", ".cts"];
-const jsExtensions: string[] = [".js", ".mjs", ".cjs"];
+const tsExtensions: string[] = [".ts", ".mts", ".cts", ".tsx"];
+const jsExtensions: string[] = [".js", ".mjs", ".cjs", ".jsx"];
 
 const supportedExtensions: string[] = [...tsExtensions, ...jsExtensions];
 
