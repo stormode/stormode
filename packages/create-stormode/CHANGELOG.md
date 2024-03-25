@@ -1,9 +1,16 @@
-## 0.5.0 (Coming Soon)
+## 0.5.0 (2024-03-25)
+
+### What's New
+
+-   Add `.gitattributes`
+-   Add `.env`
 
 ### What's Changed
 
 -   Update templates
+-   Update `package.json` script
 -   Update `tsconfig.json` default configuration
+-   Generate blank `.env.development` & `.env.production` when using vanilla
 
 ## 0.4.0 (2024-03-18)
 

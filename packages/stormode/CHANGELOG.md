@@ -1,9 +1,9 @@
-## 0.5.0 (Coming Soon)
+## 0.5.0 (2024-03-25)
 
 ### What's New
 
 -   Add config: `swc`, `build.esbuild`
--   Add `swc` for transpilation
+-   Add SWC for transpilation
 -   Add `dotenv-expand` for env variable expansion
 
 ### What's Changed
@@ -14,7 +14,6 @@
 -   Better support on monorepo
 -   Fix the parsing issue in json file
 -   Update progress behaviour on exit and error
--   Rework on env utility
 
 ### Migrate from v0.4.x
 
