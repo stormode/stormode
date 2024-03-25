@@ -61,11 +61,12 @@ const root: string = path.resolve(cwd);
 
         // answers
         const name: string = answers.name.toLowerCase();
-        const framework: "vanilla" | "express" | "fastify" | "koa" =
+        const framework: "vanilla" | "express" | "koa" | "fastify" =
             answers.framework.value;
         const variant: "ts" | "js" = answers.variant;
 
         // for framework specific contents
+        const isVanilla: boolean = framework === "vanilla";
         const isExpress: boolean = framework === "express";
         const isKoa: boolean = framework === "koa";
         const isFastify: boolean = framework === "fastify";
@@ -224,17 +225,28 @@ const root: string = path.resolve(cwd);
             path.join(projectRoot, ".gitignore"),
         );
 
+        // .env
+        await fse.ensureFile(path.join(projectRoot, ".env"));
+
         // .env.development
-        await fse.copy(
-            path.join(templateDefault, ".env.development"),
-            path.join(projectRoot, ".env.development"),
-        );
+        if (isVanilla) {
+            await fse.ensureFile(path.join(projectRoot, ".env.development"));
+        } else {
+            await fse.copy(
+                path.join(templateDefault, ".env.development"),
+                path.join(projectRoot, ".env.development"),
+            );
+        }
 
         // .env.production
-        await fse.copy(
-            path.join(templateDefault, ".env.production"),
-            path.join(projectRoot, ".env.production"),
-        );
+        if (isVanilla) {
+            await fse.ensureFile(path.join(projectRoot, ".env.production"));
+        } else {
+            await fse.copy(
+                path.join(templateDefault, ".env.production"),
+                path.join(projectRoot, ".env.production"),
+            );
+        }
 
         // stormode.config.js
         const SmConfigName: string = `stormode.config.${isTs ? "ts" : "js"}`;
