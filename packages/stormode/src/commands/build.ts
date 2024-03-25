@@ -27,7 +27,7 @@ const runBuild = async (config: FullConfig): Promise<void> => {
     // clear directory
     await fse.emptyDir(outDir);
 
-    const start: Date = new Date();
+    const start: number = performance.now() ?? new Date().getTime();
 
     // type
     await fse.writeFile(
@@ -61,10 +61,22 @@ const runBuild = async (config: FullConfig): Promise<void> => {
         });
     }
 
-    const end: Date = new Date();
+    const end: number = performance.now() ?? new Date().getTime();
+
+    const result: number = end - start;
+
+    let ms: string;
+
+    if (result >= 1) {
+        ms = Math.trunc(result).toString();
+    } else {
+        const msStr: string = result.toString();
+        const nonZeroPos: number = Math.abs(Math.floor(Math.log10(result))) + 1;
+        ms = msStr.slice(0, msStr.indexOf(".") + nonZeroPos);
+    }
 
     // done
-    terminal.ready(`Completed in ${end.getTime() - start.getTime()}ms`);
+    terminal.ready(`Completed in ${ms}ms`);
 };
 
 export { runBuild };
