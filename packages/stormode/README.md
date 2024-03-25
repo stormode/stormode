@@ -5,8 +5,8 @@ Stormode, a build tool for Node that offers a range of features to simplify your
 -   Simplify Setup
 -   Colorful Terminal
 -   TypeScript Support
--   Fast Transpiler And Bundler
 -   Environment Variables
+-   Fast Transpiling & Bundling
 
 # Getting Started with Stormode
 
