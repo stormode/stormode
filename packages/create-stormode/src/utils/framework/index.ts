@@ -73,7 +73,7 @@ const frameworks: Framework[] = [
     },
 ];
 
-const getFramework = (): FwChoice[] => {
+const getFrameworks = (): FwChoice[] => {
     return frameworks.map(
         (fw: Framework): FwChoice => ({
             title: fw.color ? fw.color(fw.title) : fw.title,
@@ -82,7 +82,7 @@ const getFramework = (): FwChoice[] => {
     );
 };
 
-const getFrameworkVariant = (fw: Framework): VrChoice[] => {
+const getFrameworkVariants = (fw: Framework): VrChoice[] => {
     const choices: VrChoice[] = [];
     fw.variants?.map((variant: Variant): void => {
         choices.push({
@@ -93,4 +93,4 @@ const getFrameworkVariant = (fw: Framework): VrChoice[] => {
     return choices;
 };
 
-export { getFramework, getFrameworkVariant };
+export { getFrameworks, getFrameworkVariants };
