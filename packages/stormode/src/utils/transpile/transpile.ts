@@ -111,7 +111,7 @@ const transpile = async (options: Options): Promise<void> => {
         jsc: {
             target: target,
             keepClassNames: true,
-            baseUrl: compilerOptions?.baseUrl ?? ".",
+            baseUrl: path.join(root),
             paths: compilerOptions?.paths ?? {},
             preserveAllComments: true,
             ...config.swc.jsc,
