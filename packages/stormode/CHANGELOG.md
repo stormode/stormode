@@ -1,3 +1,9 @@
+## 0.5.2 (2024-03-26)
+
+### What's Changed
+
+-   Update SWC configuration to prevent related error on macOS
+
 ## 0.5.1 (2024-03-25)
 
 ### What's Changed

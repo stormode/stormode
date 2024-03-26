@@ -1,6 +1,6 @@
 {
     "name": "stormode",
-    "version": "0.5.1",
+    "version": "0.5.2",
     "description": "Stormode, a build tool for Node",
     "keywords": [
         "Stormode",

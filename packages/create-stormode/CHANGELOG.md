@@ -1,3 +1,9 @@
+## 0.5.1 (2024-03-26)
+
+### What's Changed
+
+-   Update `.gitattributes`
+
 ## 0.5.0 (2024-03-25)
 
 ### What's New
