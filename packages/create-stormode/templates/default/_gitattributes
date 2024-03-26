@@ -14,6 +14,7 @@
 *.avif binary
 *.gif binary
 *.heif binary
+*.ico binary
 *.jpeg binary
 *.jpg binary
 *.png binary
