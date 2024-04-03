@@ -37,8 +37,5 @@
         "type": "git",
         "url": "https://github.com/stormode/stormode.git",
         "directory": "packages/stormode-terminal"
-    },
-    "engines": {
-        "node": ">=16"
     }
 }
