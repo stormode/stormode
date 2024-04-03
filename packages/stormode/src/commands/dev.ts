@@ -65,11 +65,19 @@ const runDev = async (config: FullConfig): Promise<void> => {
     const outPath: string = path.join(outDir, outFile);
 
     // watcher
-    const watch: string[] = [
-        `${config.rootDir}`,
-        ...(config.server.watch ?? []),
-    ];
-    const ignore: string[] = config.server.ignore ?? [];
+    const watch: string[] = [];
+
+    watch.push(config.outDir.replaceAll(/\\/g, "/"));
+
+    for (const p of config.server.watch ?? []) {
+        watch.push(p.replaceAll(/\\/g, "/"));
+    }
+
+    const ignore: string[] = [];
+
+    for (const p of config.server.ignore ?? []) {
+        ignore.push(p.replaceAll(/\\/g, "/"));
+    }
 
     const watcher: chokidar.FSWatcher = chokidar.watch(watch, {
         ignored: ignore,
