@@ -15,8 +15,9 @@ const runPreview = async (config: FullConfig): Promise<void> => {
     const outPath: string = path.join(outDir, outFile);
 
     // check if entry exists
-    if (!(await fse.exists(outPath)))
-        throw new Error(`Unable·to·find·the·entry:${outPath}`);
+    if (!(await fse.exists(outPath))) {
+        throw new Error(`Unable to find the entry: ${outPath}`);
+    }
 
     // execute
     execute({
