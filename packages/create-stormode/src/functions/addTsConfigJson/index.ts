@@ -9,7 +9,7 @@ type AddTsConfigJson = {
 const addTsConfigJson = async (options: AddTsConfigJson): Promise<void> => {
     const tsconfigJson = {
         compilerOptions: {
-            target: "ES2022",
+            target: "ES2021",
             useDefineForClassFields: true,
             module: "CommonJS",
             moduleResolution: "Node10",

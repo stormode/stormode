@@ -1,7 +1,6 @@
 import * as path from "node:path";
 
 import * as fse from "fs-extra";
-import { latest } from "#/functions/getLatestVersion";
 
 type Dependencies = {
     [key: string]: string;
@@ -26,22 +25,22 @@ const addPackageJson = async (options: AddPackageJson) => {
         // express
         ...(isExpress
             ? {
-                  express: await latest("express"),
-                  cors: await latest("cors"),
-                  "cookie-parser": await latest("cookie-parser"),
+                  express: "^4.19.2",
+                  cors: "^2.8.5",
+                  "cookie-parser": "^1.4.6",
               }
             : {}),
         // koa
         ...(isKoa
             ? {
-                  koa: await latest("koa"),
-                  "koa-router": await latest("koa-router"),
+                  koa: "^2.15.2",
+                  "@koa/router": "^12.0.1",
               }
             : {}),
         // fastify
         ...(isFastify
             ? {
-                  fastify: await latest("fastify"),
+                  fastify: "^4.26.2",
               }
             : {}),
     };
@@ -50,20 +49,20 @@ const addPackageJson = async (options: AddPackageJson) => {
         // express
         ...(isExpress
             ? {
-                  "@types/express": await latest("@types/express"),
-                  "@types/cors": await latest("@types/cors"),
-                  "@types/cookie-parser": await latest("@types/cookie-parser"),
+                  "@types/express": "^4.17.21",
+                  "@types/cors": "^2.8.17",
+                  "@types/cookie-parser": "^1.4.7",
               }
             : {}),
         // koa
         ...(isKoa
             ? {
-                  "@types/koa": await latest("@types/koa"),
-                  "@types/koa-router": await latest("@types/koa-router"),
+                  "@types/koa": "^2.15.0",
+                  "@types/koa__router": "^12.0.4",
               }
             : {}),
-        "@types/node": await latest("@types/node"),
-        typescript: await latest("typescript"),
+        "@types/node": "^20.12.5",
+        typescript: "^5.4.4",
     };
 
     // package.json
@@ -79,7 +78,7 @@ const addPackageJson = async (options: AddPackageJson) => {
         dependencies: dependencies,
         devDependencies: {
             ...(isTs ? tsDevDependencies : {}),
-            stormode: await latest("stormode"),
+            stormode: "0.5.x",
         },
     };
 
