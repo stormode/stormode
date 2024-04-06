@@ -46,7 +46,7 @@ const execute = async (options: ExecuteOptions): Promise<void> => {
     };
 
     // on change
-    options.watcher?.on("change", async (filePath): Promise<void> => {
+    options.watcher?.on("change", async (filePath: string): Promise<void> => {
         if (options.onChange) {
             progress?.kill();
             // only restart on successful change

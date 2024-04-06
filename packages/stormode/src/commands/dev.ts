@@ -67,7 +67,7 @@ const runDev = async (config: FullConfig): Promise<void> => {
     // watcher
     const watch: string[] = [];
 
-    watch.push(config.outDir.replaceAll(/\\/g, "/"));
+    watch.push(config.rootDir.replaceAll(/\\/g, "/"));
 
     for (const p of config.server.watch ?? []) {
         watch.push(p.replaceAll(/\\/g, "/"));
