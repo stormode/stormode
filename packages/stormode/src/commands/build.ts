@@ -35,28 +35,32 @@ const runBuild = async (config: FullConfig): Promise<void> => {
         JSON.stringify({ type: isModule ? "module" : "commonjs" }),
     );
 
-    // transpile
-    await transpileDir({
-        config,
-        inDir,
-        outDir,
-    });
-
-    // bundle / build
+    // bundle mode
     if (config.build.bundle) {
         terminal.wait("Bundling...");
 
+        // transpile
+        await transpileDir({
+            config,
+            inDir,
+            outDir,
+        });
+
+        // bundle
         await bundle({
             config,
             inDir: outDir,
             outDir: outDir,
         });
-    } else {
+    }
+    // build mode
+    else {
         terminal.wait("Building...");
 
+        // transpile and build
         await build({
             config,
-            inDir: outDir,
+            inDir: inDir,
             outDir: outDir,
         });
     }
@@ -65,18 +69,22 @@ const runBuild = async (config: FullConfig): Promise<void> => {
 
     const result: number = end - start;
 
-    let ms: string;
+    let total: string;
 
     if (result >= 1) {
-        ms = Math.trunc(result).toString();
+        if (result >= 1000) {
+            total = `${Math.trunc(result / 1000)}s`;
+        } else {
+            total = `${Math.trunc(result)}ms`;
+        }
     } else {
         const msStr: string = result.toString();
         const nonZeroPos: number = Math.abs(Math.floor(Math.log10(result))) + 1;
-        ms = msStr.slice(0, msStr.indexOf(".") + nonZeroPos);
+        total = `${msStr.slice(0, msStr.indexOf(".") + nonZeroPos)}ms`;
     }
 
     // done
-    terminal.ready(`Completed in ${ms}ms`);
+    terminal.ready(`Completed in ${total}`);
 };
 
 export { runBuild };

@@ -2,13 +2,13 @@ import type { FullConfig } from "#/@types/config";
 
 import { transpile } from "#/utils/transpile/transpile";
 
-type BuildFileOptions = {
+type TranspileFileOptions = {
     config: FullConfig;
     inPath: string;
     outPath: string;
 };
 
-const transpileFile = async (options: BuildFileOptions): Promise<void> => {
+const transpileFile = async (options: TranspileFileOptions): Promise<void> => {
     // declarations
     const { config, inPath, outPath } = options;
 

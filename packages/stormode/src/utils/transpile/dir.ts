@@ -6,60 +6,52 @@ import * as fse from "fs-extra";
 
 import { supportedExtensions } from "#/configs/extension";
 
+import { crawl } from "#/functions/crawl";
 import { endsWithList } from "#/functions/endsWithList";
 import { getTranspiledName } from "#/functions/getTranspiledName";
 
 import { transpile } from "#/utils/transpile/transpile";
 
-type BuildDirOptions = {
+type TranspileDirOptions = {
     config: FullConfig;
     inDir: string;
     outDir: string;
 };
 
-const transpileDir = async (options: BuildDirOptions): Promise<void> => {
+const transpileDir = async (options: TranspileDirOptions): Promise<void> => {
     // declarations
     const { config, inDir, outDir } = options;
 
     // read directory
-    const files: string[] = await fse.readdir(inDir);
+    const filePaths: string[] = await crawl({
+        path: inDir,
+        full: false,
+    });
 
     await Promise.all(
-        files.map(async (file: string): Promise<void> => {
+        filePaths.map(async (filePath: string): Promise<void> => {
             // declarations
-            const inPath: string = path.join(inDir, file);
-            const outPath: string = path.join(outDir, file);
+            const inPath: string = path.join(inDir, filePath);
+            const outPath: string = path.join(outDir, filePath);
 
-            const stats: fse.Stats = await fse.stat(inPath);
+            // transpile ts/js
+            if (endsWithList(inPath, supportedExtensions)) {
+                const _outPath: string = path.join(
+                    outDir,
+                    path.dirname(filePath),
+                    getTranspiledName(path.basename(filePath)),
+                );
 
-            // directory
-            if (stats.isDirectory()) {
-                await transpileDir({
+                // transpile
+                await transpile({
                     config,
-                    inDir: inPath,
-                    outDir: outPath,
+                    inPath: inPath,
+                    outPath: _outPath,
                 });
             }
-            // file
+            // copy
             else {
-                // transpile ts/js
-                if (endsWithList(inPath, supportedExtensions)) {
-                    const _outPath: string = path.join(
-                        outDir,
-                        getTranspiledName(file),
-                    );
-
-                    // transpile
-                    await transpile({
-                        config,
-                        inPath: inPath,
-                        outPath: _outPath,
-                    });
-                }
-                // copy
-                else {
-                    await fse.copy(inPath, outPath);
-                }
+                await fse.copy(inPath, outPath);
             }
         }),
     );

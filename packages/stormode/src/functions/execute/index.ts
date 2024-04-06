@@ -14,7 +14,7 @@ const execute = async (options: ExecuteOptions): Promise<void> => {
     let progress: childProcess.ChildProcess | null = null;
 
     const start = (): void => {
-        terminal.info("Starting...");
+        terminal.wait("Starting...");
 
         progress = childProcess.spawn("node", [
             "--enable-source-maps",

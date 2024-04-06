@@ -96,6 +96,8 @@ const runDev = async (config: FullConfig): Promise<void> => {
         JSON.stringify({ type: isModule ? "module" : "commonjs" }),
     );
 
+    terminal.wait("Transpiling...");
+
     // transpile
     await transpileDir({
         config,
