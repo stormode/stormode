@@ -14,9 +14,17 @@ const runPreview = async (config: FullConfig): Promise<void> => {
     const outFile: string = getTranspiledName(config.index);
     const outPath: string = path.join(outDir, outFile);
 
-    // check if entry exists
+    // check if entry point exists
     if (!(await fse.exists(outPath))) {
-        throw new Error(`Unable to find the entry: ${outPath}`);
+        const { terminal } = await import("#/utils/terminal");
+
+        terminal.error("Unable to find the entry point");
+        terminal.error("Please check if `index.ts` or `index.js` exists");
+        terminal.error(
+            "Or edit the `index` configuration to adjust the entry point",
+        );
+
+        return void 0;
     }
 
     // execute

@@ -58,11 +58,22 @@ const runDev = async (config: FullConfig): Promise<void> => {
         packageJson?.type?.toLocaleLowerCase() === "module";
 
     const inDir: string = path.join(root, config.rootDir);
+    const inFile: string = config.index;
+    const inPath: string = path.join(inDir, inFile);
 
     const outDir: string = path.join(cache, "build");
     const outFile: string = getTranspiledName(config.index);
-
     const outPath: string = path.join(outDir, outFile);
+
+    // check if entry point exists
+    if (!(await fse.exists(inPath))) {
+        terminal.error("Unable to find the entry point");
+        terminal.error("Please check if `index.ts` or `index.js` exists");
+        terminal.error(
+            "Or edit the `index` configuration to adjust the entry point",
+        );
+        return void 0;
+    }
 
     // watcher
     const watch: string[] = [];
