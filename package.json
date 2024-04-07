@@ -1,9 +1,9 @@
 {
     "scripts": {
-        "format": "npm-run-all --sequential format-tml format-pkg format-cli",
-        "format-tml": "biome check ./packages/stormode-terminal --apply ",
-        "format-pkg": "biome check ./packages/stormode --apply ",
-        "format-cli": "biome check ./packages/create-stormode --apply ",
+        "format": "biome check . --apply",
+        "format-tml": "biome check ./packages/stormode-terminal --apply",
+        "format-pkg": "biome check ./packages/stormode --apply",
+        "format-cli": "biome check ./packages/create-stormode --apply",
         "build": "npm-run-all --sequential build-tml build-pkg build-cli",
         "build-tml": "cd packages/stormode-terminal && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
         "build-pkg": "cd packages/stormode && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
