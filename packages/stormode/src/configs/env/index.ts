@@ -18,6 +18,6 @@ const terminalTime = (): TimeConfig => {
 
 const cwd: string = process.cwd();
 const root: string = path.resolve(cwd);
-const cache: string = path.resolve(cwd, "node_modules", ".cache", "stormode");
+const cache: string = path.resolve(cwd, "node_modules", ".stormode");
 
 export { isDev, isPrd, terminalTime, cwd, root, cache };
