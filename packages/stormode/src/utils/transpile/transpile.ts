@@ -91,7 +91,7 @@ const transpile = async (options: Options): Promise<void> => {
                 | keyof typeof ScriptTarget
                 | undefined) ??
                 // default
-                "ESNext",
+                "ES2021",
         );
 
     const type: ModuleType = await getModuleType({
