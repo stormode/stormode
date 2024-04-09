@@ -5,33 +5,27 @@ import * as path from "node:path";
 import { deepMerge } from "#/functions/deepMerge";
 import { readJSON } from "#/functions/readJSON";
 
-import { get, set } from "#/utils/store";
-
 type tsConfigLoaderOptions = {
     path: string;
-    cache?: boolean;
 };
 
 type ExtendedTranspileOptions = TranspileOptions & {
     extends?: string;
 };
 
-const tsConfigLoader = async (
+let cache: TranspileOptions | null = null;
+
+const loader = async (
     options: tsConfigLoaderOptions,
 ): Promise<TranspileOptions | null> => {
-    const cache: boolean = options.cache !== false;
-
-    // cache
-    if (cache) {
-        const cached: string | undefined = await get("tsConfig");
-        if (cached) return await JSON.parse(cached);
-    }
-
     // declarations
     const o: tsConfigLoaderOptions = options;
+
     const json: TranspileOptions | null = await readJSON<TranspileOptions>(
         o.path,
     );
+
+    if (!json) return null;
 
     const extJson: ExtendedTranspileOptions | null =
         json as ExtendedTranspileOptions | null;
@@ -44,9 +38,8 @@ const tsConfigLoader = async (
             extJson.extends,
         );
 
-        const extendedConfig: TranspileOptions | null = await tsConfigLoader({
+        const extendedConfig: TranspileOptions | null = await loader({
             path: extendedConfigPath,
-            cache: false,
         });
 
         if (extendedConfig) {
@@ -56,15 +49,28 @@ const tsConfigLoader = async (
                 extJson,
             );
 
-            cache && merged && (await set("tsConfig", JSON.stringify(merged)));
-
             return merged;
         }
     }
 
-    cache && json && (await set("tsConfig", JSON.stringify(json)));
+    return json;
+};
 
-    return extJson;
+const tsConfigLoader = async (
+    options: tsConfigLoaderOptions,
+): Promise<TranspileOptions | null> => {
+    // declarations
+    const o: tsConfigLoaderOptions = options;
+
+    // check if cached
+    if (cache !== null) return cache;
+
+    const json: TranspileOptions | null = await loader(o);
+
+    // cache
+    cache = json !== null ? json : {};
+
+    return json;
 };
 
 export { tsConfigLoader };

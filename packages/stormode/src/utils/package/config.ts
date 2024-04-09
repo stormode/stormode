@@ -3,8 +3,6 @@ import * as path from "node:path";
 import { root } from "#/configs/env";
 import { readJSON } from "#/functions/readJSON";
 
-import { get, set } from "#/utils/store";
-
 type _PackageJson = {
     name: string;
     version: string;
@@ -14,25 +12,32 @@ type _PackageJson = {
 
 type PackageJson = Partial<_PackageJson>;
 
+let pjCache: PackageJson | null = null;
+let spjCache: PackageJson | null = null;
+
 const packageJsonLoader = async (): Promise<PackageJson | null> => {
     // cache
-    const cached: string | undefined = await get("packageJson");
-    if (cached) return await JSON.parse(cached);
+    if (pjCache) return pjCache;
 
     // declarations
     const _path: string = path.resolve(root, "package.json");
 
     const json: PackageJson | null = await readJSON<PackageJson>(_path);
 
-    json && (await set("packageJson", JSON.stringify(json)));
+    if (!json) {
+        const { terminal } = await import("#/utils/terminal");
+        terminal.error("Unable to find package.json");
+        process.exit(1);
+    }
+
+    pjCache = json;
 
     return json;
 };
 
 const stormodePackageJsonLoader = async (): Promise<PackageJson | null> => {
     // cache
-    const cached: string | undefined = await get("stormodePackageJson");
-    if (cached) return await JSON.parse(cached);
+    if (spjCache) return spjCache;
 
     // declarations
     const _path: string = path.resolve(
@@ -45,7 +50,13 @@ const stormodePackageJsonLoader = async (): Promise<PackageJson | null> => {
 
     const json: PackageJson | null = await readJSON<PackageJson>(_path);
 
-    json && (await set("stormodePackageJson", JSON.stringify(json)));
+    if (!json) {
+        const { terminal } = await import("#/utils/terminal");
+        terminal.error("Unable to find package.json in Stormode");
+        process.exit(1);
+    }
+
+    spjCache = json;
 
     return json;
 };

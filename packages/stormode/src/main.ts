@@ -3,14 +3,17 @@ import type { FullConfig } from "#/@types/config";
 import type { Mode } from "#/@types/mode";
 import type { PackageJson } from "#/utils/package/config";
 
+import * as path from "node:path";
+
 import { Command } from "commander";
 import * as fse from "fs-extra";
 
-import { cache } from "#/configs/env";
+import { cache, root } from "#/configs/env";
 
 import { configLoader } from "#/utils/config/loader";
 import { logProcessEnv, setProcessEnv } from "#/utils/env";
 import { stormodePackageJsonLoader } from "#/utils/package/config";
+import { tsConfigLoader } from "./utils/typescript/config";
 
 import { runBuild } from "#/commands/build";
 import { runDev } from "#/commands/dev";
@@ -109,6 +112,11 @@ const programWithBaseOptions = (program: Command): Command => {
         // load env
         await setProcessEnv();
         await logProcessEnv();
+
+        // pre call to cache
+        await tsConfigLoader({
+            path: path.join(root, config.tsconfig),
+        });
 
         switch (mode) {
             // dev
