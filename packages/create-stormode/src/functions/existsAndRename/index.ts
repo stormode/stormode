@@ -16,8 +16,11 @@ const existsAndRename = async (options: ExistsAndRename): Promise<string> => {
     while (await fse.exists(projectRoot)) {
         count++;
 
-        const oldName: string = `${o.name}${count > 2 ? `-${count - 1}` : ""}`;
+        let oldName: string = o.name;
+        if (count > 2) oldName += `-${count - 1}`;
+
         const newName: string = `${o.name}-${count}`;
+
         const msg: string = `Folder (${oldName}) already exists`;
         const msg2: string = `project renamed to (${newName})`;
 

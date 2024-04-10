@@ -24,8 +24,7 @@ const deepMerge = async <
             }
             // override
             else {
-                merged[key] =
-                    extend[key] !== undefined ? extend[key] : source[key];
+                merged[key] = extend[key] ?? source[key];
             }
         }
     }

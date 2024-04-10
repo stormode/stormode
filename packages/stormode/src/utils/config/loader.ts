@@ -118,10 +118,12 @@ const applier = async (options: ConfigApplierOptions): Promise<FullConfig> => {
     // set env
     process.env.STORMODE_TIME =
         typeof res.withTime === "boolean"
-            ? res.withTime
+            ? // boolean
+              res.withTime
                 ? "1"
                 : "0"
-            : res.withTime;
+            : // string
+              res.withTime;
 
     return res;
 };
