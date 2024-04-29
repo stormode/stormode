@@ -1,0 +1,16 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "stormode dev",
+        "build": "stormode build",
+        "preview": "stormode preview"
+    },
+    "dependencies": {
+        "express": "^4.19.2",
+        "cors": "^2.8.5",
+        "cookie-parser": "^1.4.6"
+    },
+    "devDependencies": {
+        "stormode": "0.5.x"
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "stormode dev",
+        "build": "tsc && stormode build",
+        "preview": "stormode preview"
+    },
+    "dependencies": {
+        "koa": "^2.15.2",
+        "@koa/router": "^12.0.1"
+    },
+    "devDependencies": {
+        "@types/koa": "^2.15.0",
+        "@types/koa__router": "^12.0.4",
+        "@types/node": "^20.12.5",
+        "stormode": "0.5.x",
+        "typescript": "^5.4.5"
+    }
+}

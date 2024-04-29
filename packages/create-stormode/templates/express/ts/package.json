@@ -1,0 +1,21 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "stormode dev",
+        "build": "tsc && stormode build",
+        "preview": "stormode preview"
+    },
+    "dependencies": {
+        "express": "^4.19.2",
+        "cors": "^2.8.5",
+        "cookie-parser": "^1.4.6"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.21",
+        "@types/cors": "^2.8.17",
+        "@types/cookie-parser": "^1.4.7",
+        "@types/node": "^20.12.5",
+        "stormode": "0.5.x",
+        "typescript": "^5.4.5"
+    }
+}

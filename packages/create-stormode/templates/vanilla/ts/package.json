@@ -1,0 +1,14 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "stormode dev",
+        "build": "tsc && stormode build",
+        "preview": "stormode preview"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@types/node": "^20.12.5",
+        "stormode": "0.5.x",
+        "typescript": "^5.4.5"
+    }
+}

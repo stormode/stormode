@@ -7,7 +7,6 @@ import prompts from "prompts";
 import terminal, { color } from "stormode-terminal";
 
 import { addBaseFiles } from "#/functions/addBaseFiles";
-import { addPackageJson } from "#/functions/addPackageJson";
 import { addTsConfigJson } from "#/functions/addTsConfigJson";
 import { copyContent } from "#/functions/copyContent";
 import { existsAndRename } from "#/functions/existsAndRename";
@@ -82,14 +81,6 @@ const root: string = path.resolve(cwd);
         await fse.mkdir(projectRoot);
 
         terminal.wait("Creating files...");
-
-        // package.json
-        await addPackageJson({
-            name,
-            projectRoot,
-            framework,
-            variant,
-        });
 
         // tsconfig.json
         if (isTs) {
