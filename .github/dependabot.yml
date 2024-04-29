@@ -4,3 +4,39 @@ updates:
       directory: "/"
       schedule:
         interval: "daily"
+    # express
+    - package-ecosystem: "npm"
+      directory: "/packages/create-stormode/templates/express/js"
+      schedule:
+        interval: "daily"
+    - package-ecosystem: "npm"
+      directory: "/packages/create-stormode/templates/express/ts"
+      schedule:
+        interval: "daily"
+    # fastify
+    - package-ecosystem: "npm"
+      directory: "/packages/create-stormode/templates/fastify/js"
+      schedule:
+        interval: "daily"
+    - package-ecosystem: "npm"
+      directory: "/packages/create-stormode/templates/fastify/ts"
+      schedule:
+        interval: "daily"
+    # koa
+    - package-ecosystem: "npm"
+      directory: "/packages/create-stormode/templates/koa/js"
+      schedule:
+        interval: "daily"
+    - package-ecosystem: "npm"
+      directory: "/packages/create-stormode/templates/koa/ts"
+      schedule:
+        interval: "daily"
+    # vanilla
+    - package-ecosystem: "npm"
+      directory: "/packages/create-stormode/templates/vanilla/js"
+      schedule:
+        interval: "daily"
+    - package-ecosystem: "npm"
+      directory: "/packages/create-stormode/templates/vanilla/ts"
+      schedule:
+        interval: "daily"
