@@ -125,19 +125,19 @@ const transpile = async (options: Options): Promise<void> => {
                     ? config.swc.jsc?.parser
                     : isTs
                       ? {
-                              syntax: "typescript",
-                              tsx: true,
-                              decorators: true,
-                              dynamicImport: true,
-                          }
+                            syntax: "typescript",
+                            tsx: true,
+                            decorators: true,
+                            dynamicImport: true,
+                        }
                       : {
-                              syntax: "ecmascript",
-                              jsx: true,
-                              functionBind: true,
-                              decorators: true,
-                              decoratorsBeforeExport: true,
-                              importAssertions: true,
-                          }),
+                            syntax: "ecmascript",
+                            jsx: true,
+                            functionBind: true,
+                            decorators: true,
+                            decoratorsBeforeExport: true,
+                            importAssertions: true,
+                        }),
             },
         },
         module: {
@@ -174,9 +174,7 @@ const transpile = async (options: Options): Promise<void> => {
                     (config.swc.module as ExtendedModuleConfig | undefined)
                         ?.resolveFully ??
                     // package.json
-                    (packageJson?.type?.toLowerCase() === "module"
-                        ? true
-                        : false),
+                    packageJson?.type?.toLowerCase() === "module",
             }),
         },
         // no override

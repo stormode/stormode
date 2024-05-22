@@ -4,39 +4,69 @@ updates:
       directory: "/"
       schedule:
         interval: "daily"
+        time: "00:00"
+        timezone: "Etc/UTC"
+
     # express
+
     - package-ecosystem: "npm"
       directory: "/packages/create-stormode/templates/express/js"
       schedule:
         interval: "daily"
+        time: "00:00"
+        timezone: "Etc/UTC"
+
     - package-ecosystem: "npm"
       directory: "/packages/create-stormode/templates/express/ts"
       schedule:
         interval: "daily"
+        time: "00:00"
+        timezone: "Etc/UTC"
+
     # fastify
+
     - package-ecosystem: "npm"
       directory: "/packages/create-stormode/templates/fastify/js"
       schedule:
         interval: "daily"
+        time: "00:00"
+        timezone: "Etc/UTC"
+
     - package-ecosystem: "npm"
       directory: "/packages/create-stormode/templates/fastify/ts"
       schedule:
         interval: "daily"
+        time: "00:00"
+        timezone: "Etc/UTC"
+
     # koa
+
     - package-ecosystem: "npm"
       directory: "/packages/create-stormode/templates/koa/js"
       schedule:
         interval: "daily"
+        time: "00:00"
+        timezone: "Etc/UTC"
+
     - package-ecosystem: "npm"
       directory: "/packages/create-stormode/templates/koa/ts"
       schedule:
         interval: "daily"
+        time: "00:00"
+        timezone: "Etc/UTC"
+
     # vanilla
+
     - package-ecosystem: "npm"
       directory: "/packages/create-stormode/templates/vanilla/js"
       schedule:
         interval: "daily"
+        time: "00:00"
+        timezone: "Etc/UTC"
+
     - package-ecosystem: "npm"
       directory: "/packages/create-stormode/templates/vanilla/ts"
       schedule:
         interval: "daily"
+        time: "00:00"
+        timezone: "Etc/UTC"
