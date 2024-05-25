@@ -32,8 +32,8 @@ pnpm install
 pnpm run dev
 ```
 
-For more information, visit <a href="https://stormode.dev" target="_blank" rel="noreferrer noopener">stormode.dev</a>.
+For more information, visit <a href="https://github.com/stormode/stormode/blob/main/README.md" target="_blank" rel="noreferrer noopener">here</a>.
 
 ## License
 
-This project is MIT licensed, you can find the license file <a href="https://github.com/stormode/stormode/blob/main/LICENSE" target="_blank" rel="noreferrer noopener" >here</a>.
+This project is MIT licensed, you can find the license file [here](./LICENSE).
