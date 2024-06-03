@@ -52,7 +52,7 @@
     },
     "devDependencies": {
         "@types/fs-extra": "^11.0.4",
-        "@types/node": "^20.12.13"
+        "@types/node": "^20.14.0"
     },
     "engines": {
         "node": ">=16"
