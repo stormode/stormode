@@ -43,9 +43,9 @@ const programWithBaseOptions = (program: Command): Command => {
             .name("stormode")
             .description("Stormode, A Build Tool for Node")
             .version(
-                `v${pkj ? pkj.name : "0.0.0"}`,
+                `v${pkj ? pkj.version : "0.0.0"}`,
                 "-v, --version",
-                "get stormode version",
+                "get the current version of Stormode",
             );
 
         // dev
