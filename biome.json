@@ -44,7 +44,7 @@
             "quoteStyle": "double",
             "jsxQuoteStyle": "double",
             "quoteProperties": "asNeeded",
-            "trailingComma": "all",
+            "trailingCommas": "all",
             "semicolons": "always",
             "arrowParentheses": "always",
             "enabled": true,

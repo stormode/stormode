@@ -1,9 +1,7 @@
 {
+    "private": true,
     "scripts": {
-        "format": "biome check . --apply",
-        "format-tml": "biome check ./packages/stormode-terminal --apply",
-        "format-pkg": "biome check ./packages/stormode --apply",
-        "format-cli": "biome check ./packages/create-stormode --apply",
+        "format": "biome check --write .",
         "build": "npm-run-all --sequential build-tml build-pkg build-cli",
         "build-tml": "cd packages/stormode-terminal && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
         "build-pkg": "cd packages/stormode && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
@@ -22,7 +20,5 @@
         "ts-node": "^10.9.2",
         "tsc-alias": "^1.8.10",
         "typescript": "^5.4.5"
-    },
-    "private": true,
-    "workspaces": ["./packages/*"]
+    }
 }
