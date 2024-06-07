@@ -1,6 +1,6 @@
 {
     "name": "create-stormode",
-    "version": "0.5.1",
+    "version": "0.6.0",
     "description": "Create a Stormode project with Stormode CLI",
     "keywords": [
         "Stormode",
@@ -29,8 +29,6 @@
     "license": "MIT",
     "author": "Alpheus Tang",
     "files": ["bin", "dist", "templates"],
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
     "bin": {
         "create-stormode": "./bin/create-stormode"
     },
@@ -39,14 +37,10 @@
         "url": "https://github.com/stormode/stormode.git",
         "directory": "packages/create-stormode"
     },
-    "dependencies": {
-        "fs-extra": "^11.2.0",
-        "prompts": "^2.4.2",
-        "stormode-terminal": "workspace:^"
-    },
     "devDependencies": {
-        "@types/fs-extra": "^11.0.4",
-        "@types/prompts": "^2.4.9"
+        "@types/prompts": "^2.4.9",
+        "prompts": "^2.4.2",
+        "stormode-terminal": "workspace:~"
     },
     "engines": {
         "node": ">=16"

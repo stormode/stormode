@@ -1,22 +1,25 @@
+import type * as fs from "node:fs";
+
+import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 
-import * as fse from "fs-extra";
+import { copy, ensureDir } from "#/utils/fs";
 
 const copyContent = async (source: string, target: string): Promise<void> => {
     try {
-        await fse.ensureDir(target);
+        await ensureDir(target);
 
-        const files: string[] = await fse.readdir(source);
+        const files: string[] = await fsp.readdir(source);
 
-        for (const file of files) {
+        for await (const file of files) {
             const cSource: string = path.join(source, file);
             const cTarget: string = path.join(target, file);
-            const stat: fse.Stats = await fse.stat(cSource);
+            const stat: fs.Stats = await fsp.stat(cSource);
 
             if (stat.isDirectory()) {
                 await copyContent(cSource, cTarget);
             } else {
-                await fse.copyFile(cSource, cTarget);
+                await copy(cSource, cTarget);
             }
         }
     } catch (e: unknown) {

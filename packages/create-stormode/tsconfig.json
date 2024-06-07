@@ -9,6 +9,5 @@
             "#/*": ["src/*"]
         }
     },
-    "include": ["src"],
-    "exclude": ["templates"]
+    "include": ["src"]
 }

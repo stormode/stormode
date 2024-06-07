@@ -2,12 +2,12 @@
 
 ### What's New
 
--   Add function: `withConfig`, `custom`
--   Add config: `mute`, `time`
+- Add function: `withConfig`, `custom`
+- Add config: `mute`, `time`
 
 ### What's Changed
 
--   Deprecate config: `mode`
+- Deprecate config: `mode`
 
 ## 0.1.0 / 0.1.1 (2023-08-11)
 

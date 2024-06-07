@@ -11,6 +11,6 @@
         "cookie-parser": "^1.4.6"
     },
     "devDependencies": {
-        "stormode": "0.5.x"
+        "stormode": "~0.6.0"
     }
 }

@@ -1,8 +1,8 @@
 import type { Answers, Framework, VrChoice } from "#/@types/question";
 
+import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 
-import * as fse from "fs-extra";
 import prompts from "prompts";
 import terminal, { color } from "stormode-terminal";
 
@@ -78,7 +78,9 @@ const root: string = path.resolve(cwd);
         });
 
         // generate directory
-        await fse.mkdir(projectRoot);
+        await fsp.mkdir(projectRoot, {
+            recursive: true,
+        });
 
         terminal.wait("Creating files...");
 

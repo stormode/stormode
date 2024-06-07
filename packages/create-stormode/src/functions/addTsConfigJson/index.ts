@@ -1,6 +1,5 @@
+import * as fsp from "node:fs/promises";
 import * as path from "node:path";
-
-import * as fse from "fs-extra";
 
 type AddTsConfigJson = {
     projectRoot: string;
@@ -31,7 +30,7 @@ const addTsConfigJson = async (options: AddTsConfigJson): Promise<void> => {
 
     const tsconfigJsonData: string = JSON.stringify(tsconfigJson, null, 4);
 
-    await fse.writeFile(
+    await fsp.writeFile(
         path.join(options.projectRoot, "tsconfig.json"),
         tsconfigJsonData,
     );

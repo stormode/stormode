@@ -1,6 +1,6 @@
 {
     "name": "stormode",
-    "version": "0.5.2",
+    "version": "0.6.0",
     "description": "Stormode, a build tool for Node",
     "keywords": [
         "Stormode",
@@ -44,15 +44,14 @@
         "commander": "^12.1.0",
         "dotenv": "^16.4.5",
         "dotenv-expand": "^11.0.6",
-        "esbuild": "^0.21.4",
+        "esbuild": "~0.21.4",
         "fdir": "^6.1.1",
         "fs-extra": "^11.2.0",
         "jsonc-parser": "^3.2.1",
-        "stormode-terminal": "workspace:^"
+        "stormode-terminal": "workspace:~"
     },
     "devDependencies": {
-        "@types/fs-extra": "^11.0.4",
-        "@types/node": "^20.14.2"
+        "@types/fs-extra": "^11.0.4"
     },
     "engines": {
         "node": ">=16"

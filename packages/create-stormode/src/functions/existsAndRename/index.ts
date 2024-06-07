@@ -1,6 +1,6 @@
+import * as fs from "node:fs";
 import * as path from "node:path";
 
-import * as fse from "fs-extra";
 import terminal from "stormode-terminal";
 
 type ExistsAndRename = {
@@ -13,7 +13,7 @@ const existsAndRename = async (options: ExistsAndRename): Promise<string> => {
     let count: number = 1;
     let projectRoot: string = path.join(o.root, o.name);
 
-    while (await fse.exists(projectRoot)) {
+    while (fs.existsSync(projectRoot)) {
         count++;
 
         let oldName: string = o.name;

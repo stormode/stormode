@@ -5,7 +5,7 @@
         "build": "npm-run-all --sequential build-tml build-pkg build-cli",
         "build-tml": "cd packages/stormode-terminal && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
         "build-pkg": "cd packages/stormode && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
-        "build-cli": "cd packages/create-stormode && tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
+        "build-cli": "tsup",
         "test": "npm-run-all --sequential test-tml",
         "test-tml": "cd packages/stormode-terminal && jest"
     },
@@ -19,6 +19,7 @@
         "npm-run-all": "^4.1.5",
         "ts-node": "^10.9.2",
         "tsc-alias": "^1.8.10",
+        "tsup": "^8.1.0",
         "typescript": "^5.4.5"
     }
 }

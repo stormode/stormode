@@ -9,6 +9,6 @@
         "fastify": "^4.26.2"
     },
     "devDependencies": {
-        "stormode": "0.5.x"
+        "stormode": "~0.6.0"
     }
 }

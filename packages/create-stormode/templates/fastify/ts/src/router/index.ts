@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-const route = (server: FastifyInstance) => {
+const route = (server: FastifyInstance): void => {
     // route
     server.get(
         "/",
