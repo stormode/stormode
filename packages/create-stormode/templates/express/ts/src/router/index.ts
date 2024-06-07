@@ -7,7 +7,7 @@ const route = (app: Application): void => {
     const router: Router = Router();
 
     // routing
-    router.get("/", (req: Request, res: Response) => {
+    router.get("/", async (req: Request, res: Response): Promise<void> => {
         res.status(200).json({
             message: "Hello World",
         });
