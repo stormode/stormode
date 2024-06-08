@@ -2,24 +2,21 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 
-const ensureFile = async (path: string): Promise<void> => {
-    if (!fs.existsSync(path)) {
-        await fsp.writeFile(path, "");
+const ensureFile = async (filePath: string): Promise<void> => {
+    if (!fs.existsSync(filePath)) {
+        await fsp.mkdir(path.dirname(filePath), { recursive: true });
+        await fsp.writeFile(filePath, "");
     }
 };
 
-const ensureDir = async (path: string): Promise<void> => {
-    if (!fs.existsSync(path)) {
-        await fsp.mkdir(path, { recursive: true });
+const ensureDir = async (dirPath: string): Promise<void> => {
+    if (!fs.existsSync(dirPath)) {
+        await fsp.mkdir(dirPath, { recursive: true });
     }
 };
 
 const copy = async (from: string, to: string): Promise<void> => {
-    let isFile: boolean = true;
-
-    if ((await fsp.stat(from)).isDirectory()) {
-        isFile = false;
-    }
+    const isFile: boolean = (await fsp.stat(from)).isFile();
 
     if (!fs.existsSync(to)) {
         if (isFile) {
@@ -30,13 +27,13 @@ const copy = async (from: string, to: string): Promise<void> => {
     }
 
     if (isFile) {
-        return await fsp.copyFile(from, to);
-    }
+        await fsp.copyFile(from, to);
+    } else {
+        const items: string[] = await fsp.readdir(from);
 
-    const files: string[] = await fsp.readdir(from);
-
-    for await (const file of files) {
-        await copy(path.join(from, file), path.join(to, file));
+        for await (const item of items) {
+            await copy(path.join(from, item), path.join(to, item));
+        }
     }
 };
 
