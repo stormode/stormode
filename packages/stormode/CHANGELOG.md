@@ -1,3 +1,10 @@
+## 0.6.1 (2024-06-13)
+
+### What's Changed
+
+- Update dependencies
+- Fix for the missing support of custom config file
+
 ## 0.6.0 (2024-06-07)
 
 ### What's Changed

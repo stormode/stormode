@@ -5,7 +5,7 @@ import type { PackageJson } from "#/utils/package/config";
 
 import * as path from "node:path";
 
-import { Command } from "commander";
+import { Command, Option } from "commander";
 import * as fse from "fs-extra";
 
 import { cache, root } from "#/configs/env";
@@ -19,15 +19,6 @@ import { runBuild } from "#/commands/build";
 import { runDev } from "#/commands/dev";
 import { runPreview } from "#/commands/preview";
 
-const programWithBaseOptions = (program: Command): Command => {
-    return program
-        .option("-c, --config <path>", "config file path")
-        .option(
-            "--withtime, --withTime, --withTime <utc | local>",
-            "terminal with time",
-        );
-};
-
 (async (): Promise<void> => {
     try {
         // declarations
@@ -37,6 +28,38 @@ const programWithBaseOptions = (program: Command): Command => {
         let args: Partial<DevArgs | BuildArgs | PreviewArgs> = {};
 
         const pkj: PackageJson | null = await stormodePackageJsonLoader();
+
+        // options
+
+        const configOption: Option = new Option(
+            "-c, --config <path>",
+            "config file path",
+        );
+
+        const withTimeOption: Option = new Option(
+            "--withtime, --withTime, --withTime <utc | local>",
+            "terminal with time",
+        );
+
+        const rootDirOption: Option = new Option(
+            "--rootdir, --rootDir <directory>",
+            "input directory",
+        );
+
+        const outDirOption: Option = new Option(
+            "--outdir, --outDir <directory>",
+            "output directory",
+        );
+
+        const indexOption: Option = new Option(
+            "--index <file>",
+            "index file name",
+        );
+
+        const tsConfigOption: Option = new Option(
+            "--tsconfig <path>",
+            "tsconfig.json path",
+        );
 
         // info
         program
@@ -49,13 +72,15 @@ const programWithBaseOptions = (program: Command): Command => {
             );
 
         // dev
-        programWithBaseOptions(
-            program.command("dev").description("development server"),
-        )
-            .option("--rootdir, --rootDir <directory>", "input directory")
-            .option("--outdir, --outDir <directory>", "output directory")
-            .option("--index <file>", "index file name")
-            .option("--tsconfig <path>", "tsconfig.json path")
+        program
+            .command("dev")
+            .description("development server")
+            .addOption(configOption)
+            .addOption(withTimeOption)
+            .addOption(rootDirOption)
+            .addOption(outDirOption)
+            .addOption(indexOption)
+            .addOption(tsConfigOption)
             .action(async (_args: DevArgs): Promise<void> => {
                 mode = "dev";
                 args = _args;
@@ -63,14 +88,16 @@ const programWithBaseOptions = (program: Command): Command => {
             });
 
         // build
-        programWithBaseOptions(
-            program.command("build").description("project builder"),
-        )
+        program
+            .command("build")
+            .description("project builder")
+            .addOption(configOption)
+            .addOption(withTimeOption)
             .option("-e, --env <name>", "environment name")
-            .option("--rootdir, --rootDir <directory>", "input directory")
-            .option("--outdir, --outDir <directory>", "output directory")
-            .option("--index <file>", "index file name")
-            .option("--tsconfig <path>", "tsconfig.json path")
+            .addOption(rootDirOption)
+            .addOption(outDirOption)
+            .addOption(indexOption)
+            .addOption(tsConfigOption)
             .option("--bundle", "bundle code")
             .option("--minify", "minify code")
             .option("--map, --sourcemap, --sourceMap", "generate sourcemap")
@@ -81,11 +108,13 @@ const programWithBaseOptions = (program: Command): Command => {
             });
 
         // preview
-        programWithBaseOptions(
-            program.command("preview").description("production preview"),
-        )
-            .option("--outdir, --outDir <directory>", "output path")
-            .option("--index <file>", "index file name")
+        program
+            .command("preview")
+            .description("production preview")
+            .addOption(configOption)
+            .addOption(withTimeOption)
+            .addOption(outDirOption)
+            .addOption(indexOption)
             .action(async (_args: PreviewArgs): Promise<void> => {
                 mode = "preview";
                 args = _args;
@@ -99,8 +128,8 @@ const programWithBaseOptions = (program: Command): Command => {
 
         // load config
         const config: FullConfig = await configLoader({
-            mode: mode,
-            args: args,
+            mode,
+            args,
         });
 
         // preview

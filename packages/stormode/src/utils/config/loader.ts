@@ -146,14 +146,18 @@ const configLoader = async (
     options: ConfigLoaderOptions,
 ): Promise<FullConfig> => {
     // declarations
-    const configName: string = await finder({
+    const defaultConfigName: string = await finder({
         path: root,
     });
 
-    const configPath: string = path.join(root, configName);
+    const customConfig: string | undefined = options.args.config;
+
+    const configName: string =
+        (customConfig && path.basename(customConfig)) ?? defaultConfigName;
+    const configPath: string = path.join(root, customConfig ?? configName);
 
     // load default if not exist
-    if (configName === "") {
+    if (!customConfig && defaultConfigName === "") {
         const result: FullConfig = await applier({
             config: {},
             mode: options.mode,
@@ -166,13 +170,12 @@ const configLoader = async (
     }
 
     // declarations
-    let targetPath: string = path.join(root, configName);
+    let targetPath: string = configPath;
 
     // if the config is a ts file
     if (configName.endsWith(".ts")) {
         // declarations
-        const targetName: string = getTranspiledName(configName);
-        targetPath = path.join(cache, targetName);
+        targetPath = path.join(cache, getTranspiledName(configName));
 
         const swcOptions: SwcOptions = {
             envName: process.env.NODE_ENV,
@@ -214,15 +217,17 @@ const configLoader = async (
     }
 
     // import
-    // biome-ignore lint: module
-    const configModule: any = await require(targetPath);
+    const configModule: { default: Config } | Config = await import(targetPath);
+
     if (!configModule)
         throw new Error(
             "Unable to import the stormode config file, Please ensure that the config file exists and is in the correct format.",
         );
 
     // load
-    const config: Config = configModule.default ?? configModule;
+    const config: Config =
+        (configModule as { default: Config }).default ?? configModule;
+
     if (typeof config !== "object")
         throw new Error(
             "Unable to read stormode config file, Please make sure you have a valid config setup or the correct format.",
