@@ -44,7 +44,7 @@
         "commander": "^12.1.0",
         "dotenv": "^16.4.5",
         "dotenv-expand": "^11.0.6",
-        "esbuild": "~0.23.0",
+        "esbuild": "~0.23.1",
         "fdir": "^6.2.0",
         "fs-extra": "^11.2.0",
         "jsonc-parser": "^3.3.1",
