@@ -39,7 +39,7 @@
         "directory": "packages/stormode"
     },
     "dependencies": {
-        "@swc/core": "^1.7.26",
+        "@swc/core": "^1.7.28",
         "chokidar": "^4.0.1",
         "commander": "^12.1.0",
         "dotenv": "^16.4.5",
