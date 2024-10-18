@@ -10,7 +10,7 @@
         "test-tml": "cd packages/stormode-terminal && jest"
     },
     "devDependencies": {
-        "@biomejs/biome": "1.9.3",
+        "@biomejs/biome": "1.9.4",
         "@jest/globals": "^29.7.0",
         "@swc/core": "^1.7.36",
         "@swc/jest": "^0.2.36",
