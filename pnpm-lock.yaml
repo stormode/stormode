@@ -69,8 +69,8 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       dotenv-expand:
-        specifier: ^11.0.6
-        version: 11.0.6
+        specifier: ^12.0.0
+        version: 12.0.0
       esbuild:
         specifier: ~0.24.0
         version: 0.24.0
@@ -1132,8 +1132,8 @@ packages:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
     engines: {node: '>=8'}
 
-  dotenv-expand@11.0.6:
-    resolution: {integrity: sha512-8NHi73otpWsZGBSZwwknTXS5pqMOrk9+Ssrna8xCaxkzEpU9OTf9R5ArQGVw03//Zmk9MOwLPng9WwndvpAJ5g==}
+  dotenv-expand@12.0.0:
+    resolution: {integrity: sha512-4dtjvwQLxAzb8omUPEsHGmcxtpXKU9yDfXKk3qkEECo1U1Q0/VBwQwIvO+LdYQec3yWjSLwzzgLDImftJg/m2Q==}
     engines: {node: '>=12'}
 
   dotenv@16.4.5:
@@ -3427,7 +3427,7 @@ snapshots:
     dependencies:
       path-type: 4.0.0
 
-  dotenv-expand@11.0.6:
+  dotenv-expand@12.0.0:
     dependencies:
       dotenv: 16.4.5
 
