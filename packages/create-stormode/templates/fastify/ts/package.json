@@ -9,7 +9,7 @@
         "fastify": "^5.0.0"
     },
     "devDependencies": {
-        "@types/node": "^22.0.0",
+        "@types/node": "^22.10.1",
         "stormode": "~0.6.0",
         "typescript": "^5.4.5"
     }
